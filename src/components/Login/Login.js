@@ -17,6 +17,8 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useNavigate } from 'react-router-dom';
 import styles from './Login.module.css';
 import  logo from "../Images/logo512.png"
+import Cookies from 'js-cookie';
+import axios from 'axios';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -24,10 +26,30 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add authentication logic
-    navigate('/dashboard');
+    try {
+      const response = await axios.post('https://pkpaniwala.onrender.com/admin/logIn', {
+        email: username,
+        password,
+      });
+
+      if (response.data.status) {
+        Cookies.set('token', response.data.token);
+        navigate('/dashboard');
+      } 
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        // Axios error (HTTP error)
+        const { response } = error;
+        // Set the error message
+        const errorMessage = response.data.message;
+        alert(errorMessage);
+      } else {
+        // Network error (e.g., no internet connection)
+        alert("Something went wrong");
+      }
+    }
   };
 
   const handleClickShowPassword = () => setShowPassword(!showPassword);
