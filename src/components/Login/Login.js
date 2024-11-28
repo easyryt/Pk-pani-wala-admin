@@ -16,6 +16,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useNavigate } from 'react-router-dom';
 import styles from './Login.module.css';
+import  logo from "../Images/logo512.png"
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -33,6 +34,7 @@ const Login = () => {
 
   return (
     <div className={styles.main}>
+      <img className={styles.logo} src={logo} height={50} width={50} title='PK Pani Wala'  alt='PK Pani Wala' />
       <Container maxWidth="sm" className={styles.container}>
         <Box display="flex" flexDirection="column" alignItems="center">
           <Avatar className={styles.avatar}>
