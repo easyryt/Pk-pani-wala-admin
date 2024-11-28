@@ -1,78 +1,53 @@
-import React, { useState } from 'react';
-import {
-  AppBar,
-  Box,
-  CssBaseline,
-  Divider,
-  Drawer,
-  IconButton,
-  Toolbar,
-  Typography,
-  Grid,
-  Button,
-  Paper,
-} from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import Cookies from 'js-cookie';
-import Sidebar from './Sidebar';
-import Widget1 from './Widgets/Widget1';
-import Widget2 from './Widgets/Widget2';
-import Widget3 from './Widgets/Widget3';
-import { styled } from '@mui/material/styles';
-import LineChartWidget from './Widgets/LineChartWidget'; // Assuming this is your chart component
+import React, { useState } from "react";
+import { AppBar, Box, CssBaseline, Drawer, IconButton, Toolbar, Typography, Button, Grid, Divider } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import Sidebar from "./Sidebar"; // Ensure Sidebar component exists
+import { Outlet, useNavigate } from "react-router-dom"; // This renders nested routes
+import Cookies from "js-cookie";
+import Widget1 from "./Widgets/Widget1";
+import LineChartWidget from "./Widgets/LineChartWidget";
 
 const drawerWidth = 240;
 
-const BackgroundBox = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  minHeight: '100vh',
-  backgroundImage: 'url(https://source.unsplash.com/random/?ice,blue)',
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
-  color: theme.palette.common.white,
-}));
-
-const CustomAppBar = styled(AppBar)(({ theme }) => ({
-  backgroundColor: theme.palette.primary.main,
-  backdropFilter: 'blur(8px)',
-  boxShadow: 'none',
-}));
-
 const Dashboard = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
   const logout = () => {
-    Cookies.remove('token');
-    window.location.href = '/login';
+    // Remove token and redirect to login page
+    localStorage.removeItem("token");
+    Cookies.remove("token");
+    navigate("/login");
   };
 
   return (
-    <BackgroundBox>
+    <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <CustomAppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <Toolbar>
           <IconButton
             color="inherit"
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: 'none' } }}
+            sx={{ mr: 2, display: { sm: "none" } }}
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
+          <Typography variant="h6" noWrap>
             Admin Dashboard
           </Typography>
-          <Button color="inherit" onClick={logout} sx={{ marginLeft: 'auto' }}>
+          <Button color="inherit" onClick={logout} sx={{ marginLeft: "auto" }}>
             Logout
           </Button>
         </Toolbar>
-      </CustomAppBar>
+      </AppBar>
 
+      {/* Sidebar */}
       <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}>
         <Drawer
           variant="temporary"
@@ -80,13 +55,8 @@ const Dashboard = () => {
           onClose={handleDrawerToggle}
           ModalProps={{ keepMounted: true }}
           sx={{
-            display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': {
-              width: drawerWidth,
-              boxSizing: 'border-box',
-              backgroundColor: 'rgba(255, 255, 255, 0.8)',
-              backdropFilter: 'blur(8px)',
-            },
+            display: { xs: "block", sm: "none" },
+            "& .MuiDrawer-paper": { width: drawerWidth, boxSizing: "border-box" },
           }}
         >
           <Sidebar />
@@ -94,13 +64,8 @@ const Dashboard = () => {
         <Drawer
           variant="permanent"
           sx={{
-            display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': {
-              width: drawerWidth,
-              boxSizing: 'border-box',
-              backgroundColor: 'rgba(255, 255, 255, 0.8)',
-              backdropFilter: 'blur(8px)',
-            },
+            display: { xs: "none", sm: "block" },
+            "& .MuiDrawer-paper": { width: drawerWidth, boxSizing: "border-box" },
           }}
           open
         >
@@ -108,30 +73,34 @@ const Dashboard = () => {
         </Drawer>
       </Box>
 
-      <Box component="main" sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}>
-        <Toolbar />
-        {/* Widget Grid Layout */}
-        <Grid container spacing={3} sx={{ mb: 4 }}>
+      {/* Main Content Area */}
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          marginTop: 10,
+        }}
+      >
+        {/* Render dynamic content based on routing */}
+        <Outlet /> {/* This renders CreateProduct when navigated */}
+
+        {/* Dashboard Widgets */}
+        <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={4}>
             <Widget1 />
           </Grid>
-          <Grid item xs={12} sm={6} md={4}>
-            <Widget2 />
-          </Grid>
-          <Grid item xs={12} sm={6} md={4}>
-            <Widget3 />
-          </Grid>
+          {/* Add other widgets if needed */}
         </Grid>
 
-        {/* Line Chart */}
-        <Box sx={{ marginTop: '40px', backgroundColor: 'white', padding: 2, borderRadius: '8px' }}>
-          <Typography variant="h6" sx={{ mb: 2 }}>
-            Monthly Sales Data
-          </Typography>
+        {/* Chart */}
+        <Divider sx={{ marginY: 3 }} />
+        <Box sx={{ width: "100%", paddingTop: 4 }}>
           <LineChartWidget />
         </Box>
       </Box>
-    </BackgroundBox>
+    </Box>
   );
 };
 
