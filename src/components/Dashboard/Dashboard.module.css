@@ -1,15 +1,24 @@
-.container {
-    margin-top: 50px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .title {
-    margin-bottom: 20px;
-  }
-  
-  .button {
-    margin-top: 20px;
-  }
-  
+/* AppBar (Header) */
+.MuiAppBar-root {
+  background-color: #1976d2 !important; /* Ice blue */
+}
+
+/* Drawer (Sidebar) */
+.MuiDrawer-paper {
+  background-color: #1565c0 !important; /* Darker ice blue */
+  color: white !important;
+}
+
+
+/* Typography */
+.MuiTypography-root {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Button (Logout) */
+.MuiButton-root {
+  background-color: #0d47a1 !important;
+  color: white !important;
+  text-transform: uppercase !important;
+  border-radius: 8px !important;
+}
