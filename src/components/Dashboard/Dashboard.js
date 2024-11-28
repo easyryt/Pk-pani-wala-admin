@@ -7,7 +7,7 @@ import {
   Toolbar,
   Typography,
   Button,
-  AppBar, // Make sure AppBar is imported
+  AppBar,
   Grid,
   Divider,
 } from "@mui/material";
@@ -17,6 +17,9 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import Sidebar from "./Sidebar"; // Sidebar component
 import { Outlet, useNavigate } from "react-router-dom"; // Outlet renders child routes like CreateProduct
 import Cookies from "js-cookie";
+
+// Add your logo image here
+import logo from "../Images/logo512.png"; // Adjust the path
 
 const drawerWidth = 260;
 
@@ -49,8 +52,8 @@ const Dashboard = () => {
         position="fixed"
         sx={{
           zIndex: (theme) => theme.zIndex.drawer + 1,
-          background: "linear-gradient(to right, #1E3C72, #2A5298)",
-          boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+          background: 'linear-gradient(135deg, #1A237E, #2196F3)',  // Professional blue gradient
+          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.15)', // Subtle shadow for depth
           transition: "background 0.3s ease-in-out",
         }}
       >
@@ -64,8 +67,17 @@ const Dashboard = () => {
           >
             <MenuIcon />
           </IconButton>
+          {/* Logo in the header */}
+          <img
+            src={logo}
+            alt="Logo"
+            style={{
+              height: "40px",
+              marginRight: "10px",
+              borderRadius: "8px",
+            }}
+          />
           <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
-            <DashboardIcon sx={{ mr: 1 }} />
             Admin Dashboard
           </Typography>
           <Button
@@ -103,6 +115,7 @@ const Dashboard = () => {
               background: "linear-gradient(to bottom, #2A5298, #1E3C72)",
               color: "white",
               boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.15)",
+              backdropFilter: "blur(8px)", // Adds blur effect to sidebar
             },
           }}
         >
@@ -118,6 +131,7 @@ const Dashboard = () => {
               background: "linear-gradient(to bottom, #2A5298, #1E3C72)",
               color: "white",
               boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.15)",
+              backdropFilter: "blur(8px)", // Adds blur effect to sidebar
             },
           }}
           open
@@ -133,11 +147,11 @@ const Dashboard = () => {
           flexGrow: 1,
           p: 3,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
-          marginTop: 0,
+          marginTop: "0px", // Adjusts for AppBar height
           background: "linear-gradient(to bottom, #F0F4F8, #E0E7FF)",
           borderRadius: "12px",
           boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-          transition: "background 0.3s ease",
+          transition: "background 0.3s ease, box-shadow 0.3s ease",
         }}
       >
         <Toolbar />
