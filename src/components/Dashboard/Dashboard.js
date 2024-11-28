@@ -19,6 +19,7 @@ import Widget1 from './Widgets/Widget1';
 import Widget2 from './Widgets/Widget2';
 import Widget3 from './Widgets/Widget3';
 import { styled } from '@mui/material/styles';
+import LineChartWidget from './Widgets/LineChartWidget'; // Assuming this is your chart component
 
 const drawerWidth = 240;
 
@@ -109,7 +110,8 @@ const Dashboard = () => {
 
       <Box component="main" sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}>
         <Toolbar />
-        <Grid container spacing={3}>
+        {/* Widget Grid Layout */}
+        <Grid container spacing={3} sx={{ mb: 4 }}>
           <Grid item xs={12} sm={6} md={4}>
             <Widget1 />
           </Grid>
@@ -120,6 +122,14 @@ const Dashboard = () => {
             <Widget3 />
           </Grid>
         </Grid>
+
+        {/* Line Chart */}
+        <Box sx={{ marginTop: '40px', backgroundColor: 'white', padding: 2, borderRadius: '8px' }}>
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            Monthly Sales Data
+          </Typography>
+          <LineChartWidget />
+        </Box>
       </Box>
     </BackgroundBox>
   );

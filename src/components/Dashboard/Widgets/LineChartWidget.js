@@ -1,33 +1,60 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
-import { Paper, Typography } from '@mui/material';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
 
-const data = {
-  labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-  datasets: [
-    {
-      label: 'Revenue',
-      data: [65, 59, 80, 81, 56, 55],
-      fill: false,
-      backgroundColor: '#1565C0',
-      borderColor: '#1565C0',
-    },
-  ],
-};
-
-const options = {
-  responsive: true,
-  maintainAspectRatio: false,
-};
+// Registering chart.js components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const LineChartWidget = () => {
+  // Data for the chart
+  const data = {
+    labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+    datasets: [
+      {
+        label: 'Sales',
+        data: [65, 59, 80, 81, 56, 55],
+        borderColor: 'rgba(75,192,192,1)',
+        backgroundColor: 'rgba(75,192,192,0.2)',
+        fill: true,
+      },
+    ],
+  };
+
+  // Chart options
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Monthly Sales Data',
+      },
+    },
+  };
+
   return (
-    <Paper elevation={3} sx={{ padding: 3, height: '100%' }}>
-      <Typography variant="h6" gutterBottom>
-        Monthly Revenue
-      </Typography>
+    <div style={{ padding: '20px', backgroundColor: 'white', borderRadius: '8px' }}>
       <Line data={data} options={options} />
-    </Paper>
+    </div>
   );
 };
 
