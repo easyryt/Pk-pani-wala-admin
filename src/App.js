@@ -3,28 +3,32 @@ import Login from "./components/Login/Login";
 import Dashboard from "./components/Dashboard/Dashboard";
 import CreateProduct from "./Page/CreateProduct/CreateProduct";
 import NotFound from "./Page/NotFound/NotFound";
+import DashboardHome from "./components/Dashboard/DashboardHome";
 
 
 const App = () => {
   return (
-    <Router>
-    <Routes>
-      {/* Login Route */}
-      <Route path="/login" element={<Login />} />
+<Router>
+      <Routes>
+        {/* Login Route */}
+        <Route path="/login" element={<Login />} />
 
-      {/* Dashboard Layout Route */}
-      <Route path="/dashboard" element={<Dashboard />}>
-        {/* Other Dashboard pages */}
-        <Route path="create-product" element={<CreateProduct />} />
-      </Route>
+        {/* Dashboard Layout Route */}
+        <Route path="/dashboard" element={<Dashboard />}>
+          {/* Main Dashboard page, this will be rendered for /dashboard */}
+          <Route index element={<DashboardHome />} />
 
-      {/* Create Product Page (Not under Dashboard layout) */}
-      <Route path="/create-product" element={<CreateProduct />} />
+          {/* Create Product Page */}
+          <Route path="create-product" element={<CreateProduct />} />
+        </Route>
 
-      {/* Fallback for Not Found Pages */}
-      <Route path="*" element={<NotFound />} />
-    </Routes>
-  </Router>
+        {/* Create Product Page */}
+        <Route path="/create-product" element={<CreateProduct />} />
+
+        {/* Fallback for Not Found Pages */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Router>
   );
 };
 

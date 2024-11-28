@@ -1,19 +1,8 @@
 import React, { useState, useEffect } from "react";
-import {
-  AppBar,
-  Box,
-  CssBaseline,
-  Drawer,
-  IconButton,
-  Toolbar,
-  Typography,
-  Button,
-  Grid,
-  Divider,
-} from "@mui/material";
+import { Box, CssBaseline, Drawer, IconButton, Toolbar, Typography, Button, Grid, Divider, AppBar } from "@mui/material"; // Add AppBar here
 import MenuIcon from "@mui/icons-material/Menu";
 import Sidebar from "./Sidebar"; // Sidebar component
-import { Outlet, useNavigate } from "react-router-dom"; // Outlet renders child routes like CreateProduct
+import { Outlet, useNavigate, useLocation } from "react-router-dom"; // Outlet renders child routes like CreateProduct
 import Cookies from "js-cookie";
 import Widget1 from "./Widgets/Widget1";
 import LineChartWidget from "./Widgets/LineChartWidget";
@@ -23,6 +12,7 @@ const drawerWidth = 240;
 const Dashboard = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation(); // Get the current route
 
   useEffect(() => {
     // Redirect to login page if no token exists
@@ -42,6 +32,9 @@ const Dashboard = () => {
 
     navigate("/login", { replace: true });
   };
+
+  // Check if we are on the dashboard route or create-product route
+  const isDashboardRoute = location.pathname === "/dashboard" || location.pathname === "/dashboard/create-product";
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -104,18 +97,6 @@ const Dashboard = () => {
       >
         {/* Render the dynamic content based on routing */}
         <Outlet /> {/* This will render CreateProduct when navigated to /dashboard/create-product */}
-
-        {/* Only show widgets and charts when the user is on the dashboard page */}
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={6} md={4}>
-            <Widget1 />
-          </Grid>
-        </Grid>
-
-        <Divider sx={{ marginY: 3 }} />
-        <Box sx={{ width: "100%", paddingTop: 4 }}>
-          <LineChartWidget />
-        </Box>
       </Box>
     </Box>
   );
