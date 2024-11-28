@@ -1,1 +1,1 @@
-# Pk-pani-wala-admin
+# easytripss-admin-panel

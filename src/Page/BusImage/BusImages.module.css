@@ -1,0 +1,100 @@
+/* BusImages.module.css */
+
+.container {
+    padding: 20px;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .searchBar {
+    margin-bottom: 20px;
+    width: 100%;
+  }
+  
+  .tableContainer {
+    width: 100%;
+    max-width: 1000px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .table {
+    min-width: 600px;
+  }
+  
+  .table th, .table td {
+    text-align: center;
+    padding: 10px;
+    font-size: 1rem;
+    white-space: nowrap;
+  }
+  
+  .table th {
+    background-color: #007bff;
+    color: #fff;
+  }
+  
+  .table td {
+    background-color: #fff;
+  }
+  
+  .table img {
+    border-radius: 8px;
+  }
+  
+  .urlContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .urlContainer input {
+    width: calc(100% - 50px);
+    margin-right: 10px;
+  }
+  
+  .buttonGroup {
+    display: flex;
+    justify-content: space-around;
+  }
+  .buttonGroup button{
+    margin: .2rem!important;
+  }
+  
+  @media (max-width: 768px) {
+    .tableContainer {
+      max-width: 100%;
+    }
+  
+    .table th, .table td {
+      font-size: 0.9rem;
+      padding: 8px;
+    }
+  
+    .urlContainer input {
+      width: calc(100% - 40px);
+    }
+  
+    .searchBar {
+      max-width: 90%;
+    }
+  
+    .buttonGroup {
+      flex-direction: column;
+      gap: 10px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .table th, .table td {
+      font-size: 0.8rem;
+      padding: 6px;
+    }
+  
+    .urlContainer input {
+      width: calc(100% - 35px);
+    }
+  }
+  

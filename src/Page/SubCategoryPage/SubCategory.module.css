@@ -1,0 +1,36 @@
+.container {
+    margin-top: 30px;
+    width: 100%!important;
+  }
+  
+  .heading {
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+  
+  .actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .searchBar {
+    width: 60%;
+  }
+  
+  .createButton {
+    height: 40px;
+  }
+  
+  .tableContainer {
+    margin-top: 20px;
+  }
+  
+  .categoryImage {
+    width: 100px;
+    height: auto;
+    border-radius: 8px;
+  }
+  
