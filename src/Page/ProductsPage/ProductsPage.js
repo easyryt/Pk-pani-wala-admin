@@ -52,7 +52,6 @@ const ProductsPage = () => {
   const handleDeleteProduct = (productId) => {
     setOpenDialog(true);
     setSelectedProduct(productId);
-    
   };
 
   const confirmDelete = () => {
@@ -67,7 +66,6 @@ const ProductsPage = () => {
         .then(() => {
           setSnackbarMessage("Product deleted successfully");
           setOpenSnackbar(true);
-          // Update the product list after deletion
           setProducts((prev) => prev.filter((product) => product._id !== selectedProduct));
           setFilteredProducts((prev) => prev.filter((product) => product._id !== selectedProduct));
         })
@@ -76,9 +74,8 @@ const ProductsPage = () => {
           setOpenSnackbar(true);
         });
     }
-    setOpenDialog(false); // Close the dialog after the operation
+    setOpenDialog(false);
   };
-  
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
