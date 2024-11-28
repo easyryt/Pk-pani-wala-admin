@@ -3,6 +3,7 @@ import { Box, Grid, TextField, Button, Card, CardContent, Typography, CardMedia,
 import { Search, FilterList, Edit, Delete } from "@mui/icons-material";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
@@ -14,6 +15,7 @@ const ProductsPage = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const navigate = useNavigate()
 
   useEffect(() => {
     axios
@@ -157,6 +159,7 @@ const ProductsPage = () => {
                         size="small"
                         sx={{ marginRight: 1 }}
                         startIcon={<Edit />}
+                        onClick={() => navigate(`/dashboard/update-product/${product._id}`)} // Correct the dynamic ID route
                       >
                         Edit
                       </Button>
