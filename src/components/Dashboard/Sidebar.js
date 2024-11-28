@@ -34,7 +34,7 @@ const Sidebar = () => {
   const listStyles = {
     width: '100%',
     padding: 0,
-    marginTop: '20px',
+    marginTop: '0px',
     display: 'flex',
     flexDirection: 'column',
     gap: '10px',
