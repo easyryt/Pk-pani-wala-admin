@@ -8,12 +8,9 @@ import {
   Typography,
   Button,
   AppBar,
-  Grid,
-  Divider,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import LogoutIcon from "@mui/icons-material/Logout";
-import DashboardIcon from "@mui/icons-material/Dashboard";
 import Sidebar from "./Sidebar"; // Sidebar component
 import { Outlet, useNavigate } from "react-router-dom"; // Outlet renders child routes like CreateProduct
 import Cookies from "js-cookie";
@@ -52,12 +49,20 @@ const Dashboard = () => {
         position="fixed"
         sx={{
           zIndex: (theme) => theme.zIndex.drawer + 1,
-          background: 'linear-gradient(135deg, #1A237E, #2196F3)',  // Professional blue gradient
-          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.15)', // Subtle shadow for depth
+          background: "linear-gradient(135deg, #004D7F, #00A9E0)",  // Modern gradient
+          boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.15)", // Clean shadow for depth
+          backdropFilter: "blur(12px)", // Blur effect for a modern feel
           transition: "background 0.3s ease-in-out",
         }}
       >
-        <Toolbar>
+        <Toolbar
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: "10px 30px",  // Add more padding for spacing
+          }}
+        >
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -68,31 +73,44 @@ const Dashboard = () => {
             <MenuIcon />
           </IconButton>
           {/* Logo in the header */}
-          <img
-            src={logo}
-            alt="Logo"
-            style={{
-              height: "40px",
-              marginRight: "10px",
-              borderRadius: "8px",
-            }}
-          />
-          <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
-            Admin Dashboard
-          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <img
+              src={logo}
+              alt="Logo"
+              style={{
+                height: "50px",
+                marginRight: "15px",
+                borderRadius: "10px",
+                boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.2)", // Soft shadow for logo
+              }}
+            />
+            <Typography
+              variant="h5"
+              noWrap
+              sx={{
+                color: "white",
+                fontWeight: "600",
+                fontSize: "1.25rem",
+                letterSpacing: "0.5px",
+              }}
+            >
+              Admin Dashboard
+            </Typography>
+          </Box>
           <Button
             color="inherit"
             onClick={logout}
             startIcon={<LogoutIcon />}
             sx={{
-              backgroundColor: "#0D47A1",
+              backgroundColor: "#ff5f57", // Soft red for logout
               borderRadius: "8px",
               textTransform: "none",
+              fontWeight: 600,
               "&:hover": {
-                backgroundColor: "#0B3C85",
+                backgroundColor: "#e04e4b",
               },
-              transition: "background-color 0.3s ease",
-              padding: "8px 16px",
+              padding: "10px 18px",
+              boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)", // Subtle shadow on hover
             }}
           >
             Logout
@@ -112,10 +130,10 @@ const Dashboard = () => {
             "& .MuiDrawer-paper": {
               width: drawerWidth,
               boxSizing: "border-box",
-              background: "linear-gradient(to bottom, #2A5298, #1E3C72)",
+              background: "linear-gradient(to bottom, #2A5298, #1E3C72)",  // Sidebar gradient
               color: "white",
               boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.15)",
-              backdropFilter: "blur(8px)", // Adds blur effect to sidebar
+              backdropFilter: "blur(10px)", // Apply blur effect to sidebar
             },
           }}
         >
@@ -128,10 +146,10 @@ const Dashboard = () => {
             "& .MuiDrawer-paper": {
               width: drawerWidth,
               boxSizing: "border-box",
-              background: "linear-gradient(to bottom, #2A5298, #1E3C72)",
+              background: "linear-gradient(to bottom, #2A5298, #1E3C72)",  // Sidebar gradient
               color: "white",
               boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.15)",
-              backdropFilter: "blur(8px)", // Adds blur effect to sidebar
+              backdropFilter: "blur(10px)", // Apply blur effect to sidebar
             },
           }}
           open
@@ -147,10 +165,10 @@ const Dashboard = () => {
           flexGrow: 1,
           p: 3,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
-          marginTop: "0px", // Adjusts for AppBar height
-          background: "linear-gradient(to bottom, #F0F4F8, #E0E7FF)",
+          marginTop: "0px",  // Adjusts for AppBar height
+          background: "#f4f5f7",
           borderRadius: "12px",
-          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)", // Soft shadow for main content
           transition: "background 0.3s ease, box-shadow 0.3s ease",
         }}
       >
