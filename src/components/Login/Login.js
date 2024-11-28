@@ -10,13 +10,14 @@ import {
   Avatar,
   Grid,
   Divider,
+  CircularProgress,
 } from '@mui/material';
 import { LockOutlined, PersonOutline } from '@mui/icons-material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useNavigate } from 'react-router-dom';
 import styles from './Login.module.css';
-import  logo from "../Images/logo512.png"
+import logo from "../Images/logo512.png";
 import Cookies from 'js-cookie';
 import axios from 'axios';
 
@@ -24,10 +25,12 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false); // State to control loading indicator
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Start loading
     try {
       const response = await axios.post('https://pkpaniwala.onrender.com/admin/logIn', {
         email: username,
@@ -49,6 +52,8 @@ const Login = () => {
         // Network error (e.g., no internet connection)
         alert("Something went wrong");
       }
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
@@ -56,7 +61,7 @@ const Login = () => {
 
   return (
     <div className={styles.main}>
-      <img className={styles.logo} src={logo} height={50} width={50} title='PK Pani Wala'  alt='PK Pani Wala' />
+      <img className={styles.logo} src={logo} height={50} width={50} title='PK Pani Wala' alt='PK Pani Wala' />
       <Container maxWidth="sm" className={styles.container}>
         <Box display="flex" flexDirection="column" alignItems="center">
           <Avatar className={styles.avatar}>
@@ -84,6 +89,7 @@ const Login = () => {
                   ),
                 }}
                 className={styles.input}
+                disabled={loading} // Disable input while loading
               />
             </Grid>
             <Grid item xs={12}>
@@ -113,6 +119,7 @@ const Login = () => {
                   ),
                 }}
                 className={styles.input}
+                disabled={loading} // Disable input while loading
               />
             </Grid>
           </Grid>
@@ -121,8 +128,13 @@ const Login = () => {
             variant="contained"
             fullWidth
             className={styles.button}
+            disabled={loading} // Disable button while loading
           >
-            Login
+            {loading ? (
+              <CircularProgress size={24} color="inherit" /> // Show loading spinner
+            ) : (
+              'Login'
+            )}
           </Button>
         </Box>
       </Container>

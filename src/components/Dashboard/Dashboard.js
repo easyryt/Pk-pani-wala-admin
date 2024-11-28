@@ -1,8 +1,19 @@
-import React, { useState } from "react";
-import { AppBar, Box, CssBaseline, Drawer, IconButton, Toolbar, Typography, Button, Grid, Divider } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import {
+  AppBar,
+  Box,
+  CssBaseline,
+  Drawer,
+  IconButton,
+  Toolbar,
+  Typography,
+  Button,
+  Grid,
+  Divider,
+} from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import Sidebar from "./Sidebar"; // Ensure Sidebar component exists
-import { Outlet, useNavigate } from "react-router-dom"; // This renders nested routes
+import Sidebar from "./Sidebar"; // Sidebar component
+import { Outlet, useNavigate } from "react-router-dom"; // Outlet renders child routes like CreateProduct
 import Cookies from "js-cookie";
 import Widget1 from "./Widgets/Widget1";
 import LineChartWidget from "./Widgets/LineChartWidget";
@@ -13,15 +24,23 @@ const Dashboard = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // Redirect to login page if no token exists
+    if (!Cookies.get("token")) {
+      navigate("/login");
+    }
+  }, [navigate]);
+
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
   const logout = () => {
-    // Remove token and redirect to login page
-    localStorage.removeItem("token");
+    // Clear token and session data, navigate to login page
     Cookies.remove("token");
-    navigate("/login");
+    localStorage.removeItem("token");
+
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -83,18 +102,16 @@ const Dashboard = () => {
           marginTop: 10,
         }}
       >
-        {/* Render dynamic content based on routing */}
-        <Outlet /> {/* This renders CreateProduct when navigated */}
+        {/* Render the dynamic content based on routing */}
+        <Outlet /> {/* This will render CreateProduct when navigated to /dashboard/create-product */}
 
-        {/* Dashboard Widgets */}
+        {/* Only show widgets and charts when the user is on the dashboard page */}
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={4}>
             <Widget1 />
           </Grid>
-          {/* Add other widgets if needed */}
         </Grid>
 
-        {/* Chart */}
         <Divider sx={{ marginY: 3 }} />
         <Box sx={{ width: "100%", paddingTop: 4 }}>
           <LineChartWidget />
