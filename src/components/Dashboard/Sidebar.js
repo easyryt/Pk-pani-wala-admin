@@ -3,6 +3,7 @@ import { List, ListItem, ListItemText, Toolbar, Divider, ListItemIcon, Box } fro
 import { useNavigate, useLocation } from 'react-router-dom';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import CreateIcon from '@mui/icons-material/Create';
+import BorderAllIcon from '@mui/icons-material/BorderAll';
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ const Sidebar = () => {
   const menuItems = [
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
     { text: 'Create Product', icon: <CreateIcon />, path: '/dashboard/create-product' },
+    { text: 'All Products', icon: <BorderAllIcon />, path: '/dashboard/all-product' },
   ];
 
   // Inline styles for sidebar
