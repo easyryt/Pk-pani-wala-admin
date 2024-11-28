@@ -10,12 +10,13 @@ import {
   Checkbox,
   IconButton,
   Paper,
+  CircularProgress,
 } from "@mui/material";
 import { styled } from "@mui/system";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
-import styles from "./CreateProduct.module.css"; // Import module-level CSS
 import Cookies from "js-cookie";
+import styles from "./CreateProduct.module.css"; // Import module-level CSS
 
 // Custom Styled Components
 const CustomForm = styled(Paper)(({ theme }) => ({
@@ -81,6 +82,7 @@ const CreateProduct = () => {
   const [capacityVolume, setCapacityVolume] = useState("");
   const [bulkAvailable, setBulkAvailable] = useState(false);
   const [bulkMinQuantity, setBulkMinQuantity] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
@@ -95,12 +97,20 @@ const CreateProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = Cookies.get("token"); // Ensure token is retrieved
+
+    if (!title) {
+      alert("Title is required.");
+      return;
+    }
+
+    const token = Cookies.get("token");
+    if (!token) {
+      alert("Authorization token not found.");
+      return;
+    }
 
     const formData = new FormData();
-    productImg.forEach((img, index) => {
-      formData.append(`productImg[]`, img);
-    });
+    productImg.forEach((img) => formData.append("productImg", img));
     formData.append("title", title);
     formData.append("description", description);
     formData.append("sellingPrice", sellingPrice);
@@ -110,28 +120,30 @@ const CreateProduct = () => {
     formData.append("bulkMinQuantity", bulkMinQuantity);
 
     try {
+      setLoading(true);
+
       const response = await fetch(
         "https://pkpaniwala.onrender.com/admin/product/create",
         {
           method: "POST",
           headers: {
-            "x-admin-token": token, // Pass the token in the header
-            "Content-Type": "application/json",
+            "x-admin-token": token,
           },
-         formData,
+          body: formData, // Properly send FormData without setting Content-Type
         }
       );
+
+      setLoading(false);
 
       if (response.ok) {
         alert("Product created successfully!");
         resetForm();
       } else {
         const errorData = await response.json();
-        alert(
-          `Failed to create product: ${errorData.message || "Unknown error"}`
-        );
+        alert(`Failed to create product: ${errorData.message || "Unknown error"}`);
       }
     } catch (error) {
+      setLoading(false);
       console.error("Error submitting form:", error);
       alert("An error occurred while submitting the form.");
     }
@@ -271,13 +283,8 @@ const CreateProduct = () => {
             )}
 
             <Grid item xs={12}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                fullWidth
-              >
-                Submit
+              <Button type="submit" variant="contained" color="primary" fullWidth>
+                {loading ? <CircularProgress size={24} /> : "Submit"}
               </Button>
             </Grid>
           </Grid>
