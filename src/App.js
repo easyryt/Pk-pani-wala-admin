@@ -9,6 +9,8 @@ import UpdateProduct from "./Page/UpdateProduct/UpdateProduct";
 import FloorWiseChargesForm from "./Page/FloorWiseChargesForm/FloorWiseChargesForm";
 import ChargesList from "./Page/FloorWiseChargesList/FloorWiseChargesList";
 import UpdateChargesForm from "./Page/UpdateChargesForm/UpdateChargesForm";
+import DeliveryChargeForm from "./Page/DeliveryChargeForm/DeliveryChargeForm";
+import DeliveryChargesPage from "./Page/DeliveryChargesPage/DeliveryChargesPage";
 
 const App = () => {
   return (
@@ -31,6 +33,8 @@ const App = () => {
           <Route path="floor-wise-charges" element={<FloorWiseChargesForm />} />
           <Route path="charges-list" element={<ChargesList />} />
           <Route path="update-charges/:status" element={<UpdateChargesForm />} />
+          <Route path="delivery-Charge" element={<DeliveryChargeForm />} />
+          <Route path="all-delivery-Charges" element={<DeliveryChargesPage/>} />
         </Route>
 
         {/* Create Product Page (outside dashboard) */}
@@ -42,6 +46,8 @@ const App = () => {
         <Route path="/floor-wise-charges" element={<FloorWiseChargesForm />} />
         <Route path="/charges-list" element={<ChargesList />} />
         <Route path="/update-charges/:status" element={<UpdateChargesForm />} />
+        <Route path="/delivery-Charge" element={<DeliveryChargeForm />} />
+        <Route path="/all-delivery-Charges" element={<DeliveryChargesPage/>} />
         {/* Fallback for Not Found Pages */}
         <Route path="*" element={<NotFound />} />
       </Routes>
