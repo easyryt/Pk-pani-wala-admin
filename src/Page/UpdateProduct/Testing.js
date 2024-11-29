@@ -17,7 +17,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import Cookies from "js-cookie";
 import { useParams, useNavigate } from "react-router-dom";
-import styles from "./UpdateProduct.module.css";
 
 // Custom Styled Components
 const CustomForm = styled(Paper)(({ theme }) => ({
@@ -86,8 +85,7 @@ const UpdateProduct = () => {
   const [loading, setLoading] = useState(true); // Initially set to true for loading state
   const { id } = useParams(); // Get product id from the URL
   const navigate = useNavigate(); // To navigate after successful update
-  const [showImages, setImages] = useState([]);
-  console.log(showImages, "images");
+
   // Fetch product data when component mounts
   useEffect(() => {
     const fetchProductData = async () => {
@@ -118,10 +116,11 @@ const UpdateProduct = () => {
           setSellingPrice(product.sellingPrice || "");
           setMeasurementUnit(product.measurementUnit || "");
           setCapacityVolume(product.capacityVolume || "");
-          setBulkAvailable(product.bulkAvailable);
+          setBulkAvailable(product.bulkAvailable || false);
           setBulkMinQuantity(product.bulkMinQuantity || "");
-          setImages(product.productImg || []);
+
           // Assuming productImg is an array of image URLs, if available
+          setProductImg(product.productImg || []);
         } else {
           alert("Failed to fetch product data.");
         }
@@ -177,12 +176,12 @@ const UpdateProduct = () => {
       const response = await fetch(
         `https://pkpaniwala.onrender.com/admin/product/update/${id}`,
         {
-          method: "PUT",
-          headers: {
-            "x-admin-token": token,
-          },
-          body: formData, // Properly send FormData without setting Content-Type
-        }
+            method: "PUT",
+            headers: {
+              "x-admin-token": token,
+            },
+            body: formData, // Properly send FormData without setting Content-Type
+          }
       );
 
       setLoading(false);
@@ -192,9 +191,7 @@ const UpdateProduct = () => {
         navigate("/dashboard/all-product"); // Redirect to the products page after success
       } else {
         const errorData = await response.json();
-        alert(
-          `Failed to update product: ${errorData.message || "Unknown error"}`
-        );
+        alert(`Failed to update product: ${errorData.message || "Unknown error"}`);
       }
     } catch (error) {
       setLoading(false);
@@ -215,7 +212,7 @@ const UpdateProduct = () => {
   };
 
   return (
-    <Box className={styles.container}>
+    <Box>
       <Typography variant="h4" align="center" gutterBottom>
         Update Product
       </Typography>
@@ -223,15 +220,6 @@ const UpdateProduct = () => {
         <form onSubmit={handleSubmit}>
           <Grid container spacing={4}>
             <Grid item xs={12}>
-              {showImages.map((img) => (
-                <div>
-                  <img
-                    src={img.url}
-                    alt="Product Image"
-                    style={{ width: "100px", height: "100px" }}
-                  />
-                </div>
-              ))}
               <label htmlFor="productImg">
                 <ImageUploadContainer>
                   <AddPhotoAlternateIcon fontSize="large" />
@@ -253,7 +241,9 @@ const UpdateProduct = () => {
               <ThumbnailContainer>
                 {productImg.map((img, index) => (
                   <Thumbnail key={index}>
-                    <ThumbnailImage src={URL.createObjectURL(img)} />
+                    <ThumbnailImage
+                      src={img instanceof File ? URL.createObjectURL(img) : img.url}
+                    />
                     <RemoveButton onClick={() => handleRemoveImage(index)}>
                       <DeleteIcon fontSize="small" />
                     </RemoveButton>
@@ -320,7 +310,7 @@ const UpdateProduct = () => {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -335,27 +325,31 @@ const UpdateProduct = () => {
             {bulkAvailable && (
               <Grid item xs={6}>
                 <TextField
-                  label="Minimum Bulk Quantity"
+                  label="Minimum Quantity for Bulk"
                   type="number"
                   fullWidth
-                  required
                   value={bulkMinQuantity}
                   onChange={(e) => setBulkMinQuantity(e.target.value)}
                 />
               </Grid>
             )}
+          </Grid>
 
-            <Grid item xs={12}>
+          <Box mt={4} display="flex" justifyContent="space-between">
+            <Button variant="contained" color="secondary" onClick={resetForm}>
+              Reset
+            </Button>
+            <Box>
               <Button
-                type="submit"
                 variant="contained"
                 color="primary"
-                fullWidth
+                type="submit"
+                disabled={loading}
               >
-                {loading ? <CircularProgress size={24} /> : "Submit"}
+                {loading ? <CircularProgress size={24} /> : "Update Product"}
               </Button>
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
         </form>
       </CustomForm>
     </Box>
