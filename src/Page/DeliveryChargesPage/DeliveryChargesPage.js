@@ -15,16 +15,25 @@ import {
   Typography,
   Snackbar,
   Alert,
+  IconButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+  Tooltip,
 } from "@mui/material";
 import { styled } from "@mui/system";
 import Cookies from "js-cookie";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { Save as SaveIcon, Cancel as CancelIcon } from "@mui/icons-material";
 
 const Container = styled(Box)(({ theme }) => ({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
   flexDirection: "column",
-  minHeight: "100vh",
   backgroundColor: theme.palette.background.default,
   padding: theme.spacing(4),
 }));
@@ -50,6 +59,9 @@ const DeliveryChargesPage = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [editingCharge, setEditingCharge] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [newDeliveryCharge, setNewDeliveryCharge] = useState("");
 
   useEffect(() => {
     const fetchDeliveryCharges = async () => {
@@ -90,6 +102,76 @@ const DeliveryChargesPage = () => {
     fetchDeliveryCharges();
   }, []);
 
+  const handleDelete = async (chargeId) => {
+    const token = Cookies.get("token");
+    try {
+      const response = await axios.delete(
+        `https://pkpaniwala.onrender.com/admin/deliveryCharge/delete/${chargeId}`,
+        {
+          headers: {
+            "x-admin-token": token,
+          },
+        }
+      );
+      if (response.data.status) {
+        setSnackbarMessage("Delivery charge deleted successfully.");
+        setSnackbarSeverity("success");
+        setSnackbarOpen(true);
+        setDeliveryCharges(deliveryCharges.filter((charge) => charge._id !== chargeId));
+      } else {
+        setSnackbarMessage(response.data.message);
+        setSnackbarSeverity("error");
+        setSnackbarOpen(true);
+      }
+    } catch (err) {
+      setSnackbarMessage("Failed to delete delivery charge.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+    }
+  };
+
+  const handleEdit = (charge) => {
+    setEditingCharge(charge);
+    setNewDeliveryCharge(charge.deliveryCharge);
+    setOpenDialog(true);
+  };
+
+  const handleSaveEdit = async () => {
+    const token = Cookies.get("token");
+    try {
+      const response = await axios.put(
+        `https://pkpaniwala.onrender.com/admin/deliveryCharge/update/${editingCharge._id}`,
+        { deliveryCharge: newDeliveryCharge },
+        {
+          headers: {
+            "x-admin-token": token,
+          },
+        }
+      );
+      if (response.data.status) {
+        setSnackbarMessage("Delivery charge updated successfully.");
+        setSnackbarSeverity("success");
+        setSnackbarOpen(true);
+        setDeliveryCharges(
+          deliveryCharges.map((charge) =>
+            charge._id === editingCharge._id
+              ? { ...charge, deliveryCharge: newDeliveryCharge }
+              : charge
+          )
+        );
+        setOpenDialog(false);
+      } else {
+        setSnackbarMessage(response.data.message);
+        setSnackbarSeverity("error");
+        setSnackbarOpen(true);
+      }
+    } catch (err) {
+      setSnackbarMessage("Failed to update delivery charge.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+    }
+  };
+
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
@@ -111,6 +193,7 @@ const DeliveryChargesPage = () => {
                   <TableCell>Is Bulk?</TableCell>
                   <TableCell>Created At</TableCell>
                   <TableCell>Updated At</TableCell>
+                  <TableCell>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -118,11 +201,19 @@ const DeliveryChargesPage = () => {
                   <TableRow key={charge._id}>
                     <TableCell>{charge.deliveryCharge}</TableCell>
                     <TableCell>{charge.isBulk ? "Yes" : "No"}</TableCell>
+                    <TableCell>{new Date(charge.createdAt).toLocaleString()}</TableCell>
+                    <TableCell>{new Date(charge.updatedAt).toLocaleString()}</TableCell>
                     <TableCell>
-                      {new Date(charge.createdAt).toLocaleString()}
-                    </TableCell>
-                    <TableCell>
-                      {new Date(charge.updatedAt).toLocaleString()}
+                      <Tooltip title="Edit">
+                        <IconButton onClick={() => handleEdit(charge)}>
+                          <EditIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Delete">
+                        <IconButton onClick={() => handleDelete(charge._id)}>
+                          <DeleteIcon />
+                        </IconButton>
+                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -133,19 +224,33 @@ const DeliveryChargesPage = () => {
       )}
 
       {/* Snackbar for notifications */}
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleSnackbarClose}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={snackbarSeverity}
-          sx={{ width: "100%" }}
-        >
+      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: "100%" }}>
           {snackbarMessage}
         </Alert>
       </Snackbar>
+
+      {/* Edit Delivery Charge Dialog */}
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+        <DialogTitle>Edit Delivery Charge</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Delivery Charge"
+            type="number"
+            fullWidth
+            value={newDeliveryCharge}
+            onChange={(e) => setNewDeliveryCharge(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)} startIcon={<CancelIcon />}>
+            Cancel
+          </Button>
+          <Button onClick={handleSaveEdit} color="primary" startIcon={<SaveIcon />}>
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };

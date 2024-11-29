@@ -8,7 +8,6 @@ const Container = styled(Box)(({ theme }) => ({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  minHeight: "100vh",
   backgroundColor: theme.palette.background.default,
 }));
 
