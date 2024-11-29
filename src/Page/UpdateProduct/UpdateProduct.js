@@ -11,6 +11,8 @@ import {
   IconButton,
   Paper,
   CircularProgress,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { styled } from "@mui/system";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -84,16 +86,22 @@ const UpdateProduct = () => {
   const [bulkAvailable, setBulkAvailable] = useState(false);
   const [bulkMinQuantity, setBulkMinQuantity] = useState("");
   const [loading, setLoading] = useState(true); // Initially set to true for loading state
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const { id } = useParams(); // Get product id from the URL
   const navigate = useNavigate(); // To navigate after successful update
   const [showImages, setImages] = useState([]);
   console.log(showImages, "images");
+
   // Fetch product data when component mounts
   useEffect(() => {
     const fetchProductData = async () => {
       const token = Cookies.get("token");
       if (!token) {
-        alert("Authorization token not found.");
+        setSnackbarMessage("Authorization token not found.");
+        setSnackbarSeverity("error");
+        setSnackbarOpen(true);
         navigate("/login"); // Redirect to login if no token
         return;
       }
@@ -120,14 +128,17 @@ const UpdateProduct = () => {
           setCapacityVolume(product.capacityVolume || "");
           setBulkAvailable(product.bulkAvailable);
           setBulkMinQuantity(product.bulkMinQuantity || "");
-          setImages(product.productImg || []);
-          // Assuming productImg is an array of image URLs, if available
+          setImages(product.productImg || []); // Assuming productImg is an array of image URLs, if available
         } else {
-          alert("Failed to fetch product data.");
+          setSnackbarMessage("Failed to fetch product data.");
+          setSnackbarSeverity("error");
+          setSnackbarOpen(true);
         }
       } catch (error) {
         console.error("Error fetching product data:", error);
-        alert("An error occurred while fetching the product data.");
+        setSnackbarMessage("An error occurred while fetching the product data.");
+        setSnackbarSeverity("error");
+        setSnackbarOpen(true);
       } finally {
         setLoading(false); // Set loading to false when fetch is complete
       }
@@ -151,13 +162,17 @@ const UpdateProduct = () => {
     e.preventDefault();
 
     if (!title) {
-      alert("Title is required.");
+      setSnackbarMessage("Title is required.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
       return;
     }
 
     const token = Cookies.get("token");
     if (!token) {
-      alert("Authorization token not found.");
+      setSnackbarMessage("Authorization token not found.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
       return;
     }
 
@@ -188,18 +203,24 @@ const UpdateProduct = () => {
       setLoading(false);
 
       if (response.ok) {
-        alert("Product updated successfully!");
+        setSnackbarMessage("Product updated successfully!");
+        setSnackbarSeverity("success");
+        setSnackbarOpen(true);
         navigate("/dashboard/all-product"); // Redirect to the products page after success
       } else {
         const errorData = await response.json();
-        alert(
+        setSnackbarMessage(
           `Failed to update product: ${errorData.message || "Unknown error"}`
         );
+        setSnackbarSeverity("error");
+        setSnackbarOpen(true);
       }
     } catch (error) {
       setLoading(false);
       console.error("Error submitting form:", error);
-      alert("An error occurred while submitting the form.");
+      setSnackbarMessage("An error occurred while submitting the form.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
     }
   };
 
@@ -274,17 +295,16 @@ const UpdateProduct = () => {
 
             <Grid item xs={12}>
               <TextField
-                label="Description"
-                multiline
-                rows={4}
+                label="Product Description"
                 fullWidth
-                required
+                multiline
+                minRows={4}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
               />
             </Grid>
 
-            <Grid item xs={6}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 label="Selling Price"
                 type="number"
@@ -295,23 +315,19 @@ const UpdateProduct = () => {
               />
             </Grid>
 
-            <Grid item xs={6}>
+            <Grid item xs={12} sm={6}>
               <TextField
-                select
                 label="Measurement Unit"
                 fullWidth
                 required
                 value={measurementUnit}
                 onChange={(e) => setMeasurementUnit(e.target.value)}
-              >
-                <MenuItem value="L">L</MenuItem>
-                <MenuItem value="ml">ml</MenuItem>
-              </TextField>
+              />
             </Grid>
 
-            <Grid item xs={6}>
+            <Grid item xs={12} sm={6}>
               <TextField
-                label="Capacity Volume"
+                label="Capacity/Volume"
                 type="number"
                 fullWidth
                 required
@@ -320,44 +336,70 @@ const UpdateProduct = () => {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={6}>
               <FormControlLabel
                 control={
                   <Checkbox
                     checked={bulkAvailable}
-                    onChange={(e) => setBulkAvailable(e.target.checked)}
+                    onChange={() => setBulkAvailable(!bulkAvailable)}
+                    color="primary"
                   />
                 }
-                label="Bulk Available"
+                label="Available in Bulk"
               />
-            </Grid>
-
-            {bulkAvailable && (
-              <Grid item xs={6}>
+              {bulkAvailable && (
                 <TextField
-                  label="Minimum Bulk Quantity"
+                  label="Bulk Minimum Quantity"
                   type="number"
                   fullWidth
-                  required
                   value={bulkMinQuantity}
                   onChange={(e) => setBulkMinQuantity(e.target.value)}
                 />
-              </Grid>
-            )}
+              )}
+            </Grid>
 
-            <Grid item xs={12}>
+            <Grid item xs={12} className={styles.buttons}>
               <Button
-                type="submit"
+                variant="outlined"
+                color="secondary"
+                sx={{margin:"5px"}}
+                onClick={resetForm}
+                disabled={loading}
+              >
+                Reset
+              </Button>
+              <Button
                 variant="contained"
                 color="primary"
-                fullWidth
+                sx={{margin:"5px"}}
+                type="submit"
+                disabled={loading}
               >
-                {loading ? <CircularProgress size={24} /> : "Submit"}
+                {loading ? (
+                  <CircularProgress size={24} color="inherit" />
+                ) : (
+                  "Update Product"
+                )}
               </Button>
             </Grid>
           </Grid>
         </form>
       </CustomForm>
+
+      {/* Snackbar for notifications */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={() => setSnackbarOpen(false)}
+      >
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

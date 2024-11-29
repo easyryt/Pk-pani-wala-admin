@@ -11,6 +11,8 @@ import {
   IconButton,
   Paper,
   CircularProgress,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { styled } from "@mui/system";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -83,6 +85,9 @@ const CreateProduct = () => {
   const [bulkAvailable, setBulkAvailable] = useState(false);
   const [bulkMinQuantity, setBulkMinQuantity] = useState("");
   const [loading, setLoading] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
@@ -99,13 +104,17 @@ const CreateProduct = () => {
     e.preventDefault();
 
     if (!title) {
-      alert("Title is required.");
+      setSnackbarMessage("Title is required.");
+      setSnackbarSeverity("error");
+      setOpenSnackbar(true);
       return;
     }
 
     const token = Cookies.get("token");
     if (!token) {
-      alert("Authorization token not found.");
+      setSnackbarMessage("Authorization token not found.");
+      setSnackbarSeverity("error");
+      setOpenSnackbar(true);
       return;
     }
 
@@ -136,16 +145,22 @@ const CreateProduct = () => {
       setLoading(false);
 
       if (response.ok) {
-        alert("Product created successfully!");
+        setSnackbarMessage("Product created successfully!");
+        setSnackbarSeverity("success");
+        setOpenSnackbar(true);
         resetForm();
       } else {
         const errorData = await response.json();
-        alert(`Failed to create product: ${errorData.message || "Unknown error"}`);
+        setSnackbarMessage(`Failed to create product: ${errorData.message || "Unknown error"}`);
+        setSnackbarSeverity("error");
+        setOpenSnackbar(true);
       }
     } catch (error) {
       setLoading(false);
       console.error("Error submitting form:", error);
-      alert("An error occurred while submitting the form.");
+      setSnackbarMessage("An error occurred while submitting the form.");
+      setSnackbarSeverity("error");
+      setOpenSnackbar(true);
     }
   };
 
@@ -290,6 +305,16 @@ const CreateProduct = () => {
           </Grid>
         </form>
       </CustomForm>
+
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={() => setOpenSnackbar(false)}
+      >
+        <Alert onClose={() => setOpenSnackbar(false)} severity={snackbarSeverity}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
