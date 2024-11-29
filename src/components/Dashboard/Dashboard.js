@@ -27,7 +27,7 @@ const Dashboard = () => {
   useEffect(() => {
     // Redirect to login page if no token exists
     if (!Cookies.get("token")) {
-      navigate("/login");
+      navigate("/");
     }
   }, [navigate]);
 
