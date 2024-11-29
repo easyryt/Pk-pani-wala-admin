@@ -3,6 +3,7 @@ import { Box, Grid, Card, CardContent, CardHeader, Typography, IconButton, Divid
 import { styled } from "@mui/system";
 import { Edit, Delete, Info } from "@mui/icons-material";
 import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 
 // Utility function to format dates
 const formatDate = (date) => {
@@ -72,6 +73,7 @@ const ChargesList = () => {
   const [snackOpen, setSnackOpen] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedCharge, setSelectedCharge] = useState(null);
+  const navigate = useNavigate()
 
   // Fetch all floor-wise charges from the server
   const fetchCharges = async () => {
@@ -152,7 +154,7 @@ const ChargesList = () => {
                     <CardHeader
                       action={
                         <>
-                          <IconButton color="primary">
+                          <IconButton color="primary" onClick={() => navigate(`/dashboard/update-charges/${charge.isBulk}`)} >
                             <Edit />
                           </IconButton>
                           <IconButton color="error" onClick={() => handleOpenDialog(charge)}>
