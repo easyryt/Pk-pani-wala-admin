@@ -90,7 +90,7 @@ const FloorWiseChargesForm = () => {
 
       if (response.ok) {
         alert("Data submitted successfully!");
-        navigate("/dashboard"); // Redirect to dashboard or another page
+        navigate("/dashboard/charges-list"); // Redirect to dashboard or another page
       } else {
         alert("Failed to submit data");
       }

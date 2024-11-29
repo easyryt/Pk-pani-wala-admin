@@ -16,6 +16,7 @@ import { Edit } from "@mui/icons-material";
 import { useNavigate, useParams } from "react-router-dom";
 import Cookies from "js-cookie";
 
+
 // Styled components for a professional UI
 const FormContainer = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(4),
@@ -116,7 +117,7 @@ const UpdateChargesForm = () => {
 
       if (response.ok) {
         alert("Charges updated successfully!");
-        navigate("/dashboard"); // Redirect to dashboard or another page
+        navigate("/dashboard/charges-list"); // Redirect to dashboard or another page
       } else {
         alert("Failed to update charges");
       }

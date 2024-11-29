@@ -5,6 +5,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import CreateIcon from '@mui/icons-material/Create';
 import BorderAllIcon from '@mui/icons-material/BorderAll';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ const Sidebar = () => {
     { text: 'Create Product', icon: <CreateIcon />, path: '/dashboard/create-product' },
     { text: 'All Products', icon: <BorderAllIcon />, path: '/dashboard/all-product' },
     { text: 'Floor wise charges', icon: <AttachMoneyIcon />, path: '/dashboard/floor-wise-charges' },
-    { text: 'List Of Floor charges', icon: <AttachMoneyIcon />, path: '/dashboard/charges-list' },
+    { text: 'List Of Floor charges', icon: <FormatListNumberedIcon />, path: '/dashboard/charges-list' },
   ];
 
   // Inline styles for sidebar
