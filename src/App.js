@@ -6,6 +6,8 @@ import NotFound from "./Page/NotFound/NotFound";
 import DashboardHome from "./components/Dashboard/DashboardHome";
 import ProductsPage from "./Page/ProductsPage/ProductsPage";
 import UpdateProduct from "./Page/UpdateProduct/UpdateProduct";
+import FloorWiseChargesForm from "./Page/FloorWiseChargesForm/FloorWiseChargesForm";
+import ChargesList from "./Page/FloorWiseChargesList/FloorWiseChargesList";
 
 const App = () => {
   return (
@@ -25,6 +27,8 @@ const App = () => {
           <Route path="all-product" element={<ProductsPage />} />
           {/* Update Product Page (dynamic product id) */}
           <Route path="update-product/:id" element={<UpdateProduct />} />
+          <Route path="floor-wise-charges" element={<FloorWiseChargesForm />} />
+          <Route path="charges-list" element={<ChargesList />} />
         </Route>
 
         {/* Create Product Page (outside dashboard) */}
@@ -33,7 +37,8 @@ const App = () => {
         <Route path="/all-product" element={<ProductsPage />} />
         {/* Update Product Page (outside dashboard) */}
         <Route path="/update-product/:id" element={<UpdateProduct />} />
-        
+        <Route path="/floor-wise-charges" element={<FloorWiseChargesForm />} />
+        <Route path="/charges-list" element={<ChargesList />} />
         {/* Fallback for Not Found Pages */}
         <Route path="*" element={<NotFound />} />
       </Routes>
