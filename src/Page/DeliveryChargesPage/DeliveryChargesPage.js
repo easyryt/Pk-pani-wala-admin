@@ -32,6 +32,7 @@ import Cookies from "js-cookie";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Save as SaveIcon, Cancel as CancelIcon } from "@mui/icons-material";
+import { useNavigate, useParams } from "react-router-dom";
 
 const Container = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -69,6 +70,7 @@ const DeliveryChargesPage = () => {
   const [isBulkFilter, setIsBulkFilter] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedChargeToDelete, setSelectedChargeToDelete] = useState(null);
+  const navigate = useNavigate()
 
   useEffect(() => {
     fetchDeliveryCharges();
@@ -236,7 +238,8 @@ const DeliveryChargesPage = () => {
                     </TableCell>
                     <TableCell>
                       <Tooltip title="Edit">
-                        <IconButton onClick={() => handleEdit(charge)}>
+                        <IconButton onClick={() => navigate(`/dashboard/delivery-update-charges/${charge.isBulk}`)}
+                        >
                           <EditIcon />
                         </IconButton>
                       </Tooltip>

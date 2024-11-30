@@ -11,6 +11,7 @@ import ChargesList from "./Page/FloorWiseChargesList/FloorWiseChargesList";
 import UpdateChargesForm from "./Page/UpdateChargesForm/UpdateChargesForm";
 import DeliveryChargeForm from "./Page/DeliveryChargeForm/DeliveryChargeForm";
 import DeliveryChargesPage from "./Page/DeliveryChargesPage/DeliveryChargesPage";
+import UpdateDeliveryChargeForm from "./Page/UpdateDeliveryChargeForm/UpdateDeliveryChargeForm";
 
 const App = () => {
   return (
@@ -35,6 +36,7 @@ const App = () => {
           <Route path="update-charges/:status" element={<UpdateChargesForm />} />
           <Route path="delivery-Charge" element={<DeliveryChargeForm />} />
           <Route path="all-delivery-Charges" element={<DeliveryChargesPage/>} />
+          <Route path="delivery-update-charges/:status" element={<UpdateDeliveryChargeForm/>} />
         </Route>
 
         {/* Create Product Page (outside dashboard) */}
@@ -48,6 +50,7 @@ const App = () => {
         <Route path="/update-charges/:status" element={<UpdateChargesForm />} />
         <Route path="/delivery-Charge" element={<DeliveryChargeForm />} />
         <Route path="/all-delivery-Charges" element={<DeliveryChargesPage/>} />
+        <Route path="/delivery-update-charges/:status" element={<UpdateDeliveryChargeForm/>} />
         {/* Fallback for Not Found Pages */}
         <Route path="*" element={<NotFound />} />
       </Routes>
