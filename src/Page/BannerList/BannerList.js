@@ -12,11 +12,10 @@ import {
   IconButton,
   Tooltip,
   Modal,
-  Button,
   Snackbar,
   Alert,
 } from "@mui/material";
-import { Visibility, ToggleOn, ToggleOff, Close } from "@mui/icons-material";
+import { Visibility, ToggleOn, ToggleOff, Close, Delete } from "@mui/icons-material";
 import axios from "axios";
 import Cookies from "js-cookie";
 
@@ -27,6 +26,7 @@ const BannerList = () => {
   const [error, setError] = useState("");
   const [selectedImage, setSelectedImage] = useState(null); // For modal preview
   const [updatingBanner, setUpdatingBanner] = useState(""); // Tracks which banner is being updated
+  const [deletingBanner, setDeletingBanner] = useState(""); // Tracks which banner is being deleted
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("info");
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -104,6 +104,43 @@ const BannerList = () => {
       setOpenSnackbar(true);
     } finally {
       setUpdatingBanner("");
+    }
+  };
+
+  // Delete banner
+  const handleDeleteBanner = async (bannerId) => {
+    setDeletingBanner(bannerId); // Mark the current banner as deleting
+    const token = Cookies.get("token");
+    if (!token) {
+      setSnackbarMessage("Authorization token not found.");
+      setSnackbarSeverity("error");
+      setOpenSnackbar(true);
+      return;
+    }
+    try {
+      await axios.delete(
+        `https://pkpaniwala.onrender.com/admin/banner/delete/${bannerId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "x-admin-token": token,
+          },
+        }
+      );
+
+      // Remove the banner from local state after successful API call
+      setBanners((prevBanners) =>
+        prevBanners.filter((banner) => banner._id !== bannerId)
+      );
+      setSnackbarMessage("Banner deleted successfully.");
+      setSnackbarSeverity("success");
+      setOpenSnackbar(true);
+    } catch (err) {
+      setSnackbarMessage("Failed to delete banner. Please try again.");
+      setSnackbarSeverity("error");
+      setOpenSnackbar(true);
+    } finally {
+      setDeletingBanner("");
     }
   };
 
@@ -257,6 +294,19 @@ const BannerList = () => {
                         <Visibility style={{ color: "#3f51b5" }} />
                       </IconButton>
                     </Tooltip>
+
+                    <Tooltip title="Delete">
+                      <IconButton
+                        onClick={() => handleDeleteBanner(banner._id)}
+                        disabled={deletingBanner === banner._id} // Disable button while deleting
+                      >
+                        {deletingBanner === banner._id ? (
+                          <CircularProgress size={20} />
+                        ) : (
+                          <Delete style={{ color: "red" }} />
+                        )}
+                      </IconButton>
+                    </Tooltip>
                   </TableCell>
                 </TableRow>
               ))}
@@ -267,10 +317,10 @@ const BannerList = () => {
 
       {/* Modal for image preview */}
       <Modal
-        open={!!selectedImage}
+        open={Boolean(selectedImage)}
         onClose={() => setSelectedImage(null)}
-        aria-labelledby="image-modal"
-        aria-describedby="modal-to-show-full-size-banner-image"
+        aria-labelledby="image-preview-modal"
+        aria-describedby="image-preview-modal-description"
       >
         <Box
           sx={{
@@ -279,23 +329,22 @@ const BannerList = () => {
             alignItems: "center",
             height: "100vh",
             position: "relative",
-            backgroundColor: "rgba(0, 0, 0, 0.8)",
           }}
         >
-          <img src={selectedImage} alt="Full Banner" style={styles.modalImage} />
+          <img src={selectedImage} alt="Preview" style={styles.modalImage} />
           <IconButton
-            sx={styles.modalCloseButton}
             onClick={() => setSelectedImage(null)}
+            sx={styles.modalCloseButton}
           >
             <Close />
           </IconButton>
         </Box>
       </Modal>
 
-      {/* Snackbar for success/error messages */}
+      {/* Snackbar for notifications */}
       <Snackbar
         open={openSnackbar}
-        autoHideDuration={6000}
+        autoHideDuration={3000}
         onClose={handleCloseSnackbar}
       >
         <Alert
