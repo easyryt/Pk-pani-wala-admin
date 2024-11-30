@@ -191,6 +191,14 @@ const OrderDetails = () => {
               <Grid item xs={12} md={6}>
                 <Card sx={{ boxShadow: 6, borderRadius: 2, backgroundColor: '#ffffff' }}>
                   <CardContent>
+                    <Typography variant="h6" sx={{ fontWeight: 600 }}>Total Item</Typography>
+                    <Typography variant="body1" sx={{ fontWeight: 500 }}>{orderData.productData.totalItem}</Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Card sx={{ boxShadow: 6, borderRadius: 2, backgroundColor: '#ffffff' }}>
+                  <CardContent>
                     <Typography variant="h6" sx={{ fontWeight: 600 }}>Total Product Price</Typography>
                     <Typography variant="body1" sx={{ fontWeight: 500 }}>${orderData.productData.totalProductPrice}</Typography>
                   </CardContent>
@@ -199,8 +207,40 @@ const OrderDetails = () => {
               <Grid item xs={12} md={6}>
                 <Card sx={{ boxShadow: 6, borderRadius: 2, backgroundColor: '#ffffff' }}>
                   <CardContent>
+                    <Typography variant="h6" sx={{ fontWeight: 600 }}>Gst Amount</Typography>
+                    <Typography variant="body1" sx={{ fontWeight: 500 }}>${orderData.productData.gstAmount}</Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Card sx={{ boxShadow: 6, borderRadius: 2, backgroundColor: '#ffffff' }}>
+                  <CardContent>
+                    <Typography variant="h6" sx={{ fontWeight: 600 }}>Total Delivery Charge</Typography>
+                    <Typography variant="body1" sx={{ fontWeight: 500 }}>${orderData.productData.totalDeliveryCharge}</Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Card sx={{ boxShadow: 6, borderRadius: 2, backgroundColor: '#ffffff' }}>
+                  <CardContent>
                     <Typography variant="h6" sx={{ fontWeight: 600 }}>Total Order Price</Typography>
-                    <Typography variant="body1" sx={{ fontWeight: 500 }}>${orderData.productData.totalOrderPrice}</Typography>
+                    <Typography variant="body1" sx={{ fontWeight: 500 }}>${orderData.productData.grandTotal}</Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Card sx={{ boxShadow: 6, borderRadius: 2, backgroundColor: '#ffffff' }}>
+                  <CardContent>
+                    <Typography variant="h6" sx={{ fontWeight: 600 }}>Total Floor Charge</Typography>
+                    <Typography variant="body1" sx={{ fontWeight: 500 }}>${orderData.productData.totalFloorCharge}</Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Card sx={{ boxShadow: 6, borderRadius: 2, backgroundColor: '#ffffff' }}>
+                  <CardContent>
+                    <Typography variant="h6" sx={{ fontWeight: 600 }}>Grand Total</Typography>
+                    <Typography variant="body1" sx={{ fontWeight: 500 }}>${orderData.productData.grandTotal}</Typography>
                   </CardContent>
                 </Card>
               </Grid>
