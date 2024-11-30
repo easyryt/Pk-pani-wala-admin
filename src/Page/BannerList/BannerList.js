@@ -12,25 +12,46 @@ import {
   IconButton,
   Tooltip,
   Modal,
+  Button,
+  Snackbar,
+  Alert,
 } from "@mui/material";
-import { Visibility, ToggleOn, ToggleOff } from "@mui/icons-material";
+import { Visibility, ToggleOn, ToggleOff, Close } from "@mui/icons-material";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 const BannerList = () => {
+  // State variables
   const [banners, setBanners] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [selectedImage, setSelectedImage] = useState(null); // For modal preview
-  const [updatingStatus, setUpdatingStatus] = useState(false); // For updating status
+  const [updatingBanner, setUpdatingBanner] = useState(""); // Tracks which banner is being updated
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("info");
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
   // Fetch banners from API
   useEffect(() => {
     const fetchBanners = async () => {
+      const token = Cookies.get("token");
+      if (!token) {
+        setSnackbarMessage("Authorization token not found.");
+        setSnackbarSeverity("error");
+        setOpenSnackbar(true);
+        return;
+      }
       setLoading(true);
       setError("");
       try {
         const response = await axios.get(
-          "https://pkpaniwala.onrender.com/public/banner/getAll"
+          "https://pkpaniwala.onrender.com/public/banner/getAll",
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "x-admin-token": token,
+            },
+          }
         );
         if (response?.data?.data) {
           setBanners(response.data.data);
@@ -47,12 +68,25 @@ const BannerList = () => {
 
   // Update banner status
   const handleStatusToggle = async (bannerId, currentStatus) => {
-    setUpdatingStatus(true);
+    setUpdatingBanner(bannerId); // Mark the current banner as updating
+    const token = Cookies.get("token");
+    if (!token) {
+      setSnackbarMessage("Authorization token not found.");
+      setSnackbarSeverity("error");
+      setOpenSnackbar(true);
+      return;
+    }
     try {
       const updatedStatus = !currentStatus;
       await axios.put(
         `https://pkpaniwala.onrender.com/admin/banner/updateActiveStatus/${bannerId}`,
-        { isActive: updatedStatus }
+        { isActive: updatedStatus },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "x-admin-token": token,
+          },
+        }
       );
 
       // Update local state after successful API call
@@ -61,11 +95,21 @@ const BannerList = () => {
           banner._id === bannerId ? { ...banner, isActive: updatedStatus } : banner
         )
       );
+      setSnackbarMessage("Banner status updated successfully.");
+      setSnackbarSeverity("success");
+      setOpenSnackbar(true);
     } catch (err) {
-      console.error("Failed to update status:", err);
+      setSnackbarMessage("Failed to update status. Please try again.");
+      setSnackbarSeverity("error");
+      setOpenSnackbar(true);
     } finally {
-      setUpdatingStatus(false);
+      setUpdatingBanner("");
     }
+  };
+
+  // Close snackbar
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
   };
 
   // Inline styles for professional UI
@@ -132,6 +176,13 @@ const BannerList = () => {
       alignItems: "center",
       height: "100px",
     },
+    modalCloseButton: {
+      position: "absolute",
+      top: "10px",
+      right: "10px",
+      backgroundColor: "#fff",
+      borderRadius: "50%",
+    },
   };
 
   return (
@@ -172,7 +223,7 @@ const BannerList = () => {
 
                   {/* Status of the banner */}
                   <TableCell sx={styles.tableCell}>
-                    {updatingStatus ? (
+                    {updatingBanner === banner._id ? (
                       <CircularProgress size={24} />
                     ) : banner.isActive ? (
                       <Tooltip title="Active">
@@ -227,12 +278,34 @@ const BannerList = () => {
             justifyContent: "center",
             alignItems: "center",
             height: "100vh",
+            position: "relative",
             backgroundColor: "rgba(0, 0, 0, 0.8)",
           }}
         >
           <img src={selectedImage} alt="Full Banner" style={styles.modalImage} />
+          <IconButton
+            sx={styles.modalCloseButton}
+            onClick={() => setSelectedImage(null)}
+          >
+            <Close />
+          </IconButton>
         </Box>
       </Modal>
+
+      {/* Snackbar for success/error messages */}
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
