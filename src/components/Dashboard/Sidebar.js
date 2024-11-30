@@ -16,6 +16,7 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
 import DeliveryDiningIcon from '@mui/icons-material/DeliveryDining';
 import GroupIcon from '@mui/icons-material/Group';
+import LocalShippingSharpIcon from '@mui/icons-material/LocalShippingSharp';
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -57,6 +58,11 @@ const Sidebar = () => {
       text: "Consumers",
       icon: <GroupIcon />,
       path: "/dashboard/consumers",
+    },
+    {
+      text: "Order History",
+      icon: <LocalShippingSharpIcon />,
+      path: "/dashboard/order-history",
     },
   ];
 

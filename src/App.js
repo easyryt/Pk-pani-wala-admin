@@ -14,6 +14,7 @@ import DeliveryChargesPage from "./Page/DeliveryChargesPage/DeliveryChargesPage"
 import UpdateDeliveryChargeForm from "./Page/UpdateDeliveryChargeForm/UpdateDeliveryChargeForm";
 import ConsumersPage from "./Page/ConsumersPage/ConsumersPage";
 import ConsumerKartPage from "./Page/ConsumerKartPage/ConsumerKartPage";
+import OrderHistoryPage from "./Page/OrderHistoryPage/OrderHistoryPage";
 
 const App = () => {
   return (
@@ -41,6 +42,7 @@ const App = () => {
           <Route path="delivery-update-charges/:status" element={<UpdateDeliveryChargeForm/>} />
           <Route path="consumers" element={<ConsumersPage />} />
           <Route path="consumers-cart/:id" element={<ConsumerKartPage />} />
+          <Route path="order-history" element={<OrderHistoryPage />} />
         </Route>
 
         {/* Create Product Page (outside dashboard) */}
@@ -57,6 +59,7 @@ const App = () => {
         <Route path="/delivery-update-charges/:status" element={<UpdateDeliveryChargeForm/>} />
         <Route path="/consumers" element={<ConsumersPage />} />
         <Route path="/consumers-cart/:id" element={<ConsumerKartPage />} />
+        <Route path="/order-history" element={<OrderHistoryPage />} />
         {/* Fallback for Not Found Pages */}
         <Route path="*" element={<NotFound />} />
       </Routes>
