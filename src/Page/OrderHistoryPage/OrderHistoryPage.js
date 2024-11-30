@@ -136,6 +136,13 @@ const OrderHistoryPage = () => {
     setSnackbarOpen(false);
   };
 
+  // Reset the search and date range filters
+  const resetFilters = () => {
+    setSearchQuery("");
+    setFromDate("");
+    setToDate("");
+  };
+
   return (
     <Container>
       <Title variant="h4">Order History</Title>
@@ -185,6 +192,16 @@ const OrderHistoryPage = () => {
             sx={{ maxWidth: 200 }}
           />
         </Box>
+
+        {/* Reset Filter Button */}
+        <Button
+          variant="outlined"
+          color="secondary"
+          onClick={resetFilters}
+          sx={{ maxWidth: 200 }}
+        >
+          Reset Filters
+        </Button>
       </SearchBarWrapper>
 
       {/* Loader or Error Message */}
