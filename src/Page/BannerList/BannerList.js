@@ -11,6 +11,7 @@ import {
   CircularProgress,
   IconButton,
   Tooltip,
+  Modal,
 } from "@mui/material";
 import { Visibility, ToggleOn, ToggleOff } from "@mui/icons-material";
 import axios from "axios";
@@ -19,6 +20,8 @@ const BannerList = () => {
   const [banners, setBanners] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [selectedImage, setSelectedImage] = useState(null); // For modal preview
+  const [updatingStatus, setUpdatingStatus] = useState(false); // For updating status
 
   // Fetch banners from API
   useEffect(() => {
@@ -26,7 +29,9 @@ const BannerList = () => {
       setLoading(true);
       setError("");
       try {
-        const response = await axios.get("https://pkpaniwala.onrender.com/public/banner/getAll");
+        const response = await axios.get(
+          "https://pkpaniwala.onrender.com/public/banner/getAll"
+        );
         if (response?.data?.data) {
           setBanners(response.data.data);
         }
@@ -39,6 +44,29 @@ const BannerList = () => {
 
     fetchBanners();
   }, []);
+
+  // Update banner status
+  const handleStatusToggle = async (bannerId, currentStatus) => {
+    setUpdatingStatus(true);
+    try {
+      const updatedStatus = !currentStatus;
+      await axios.put(
+        `https://pkpaniwala.onrender.com/admin/banner/updateActiveStatus/${bannerId}`,
+        { isActive: updatedStatus }
+      );
+
+      // Update local state after successful API call
+      setBanners((prevBanners) =>
+        prevBanners.map((banner) =>
+          banner._id === bannerId ? { ...banner, isActive: updatedStatus } : banner
+        )
+      );
+    } catch (err) {
+      console.error("Failed to update status:", err);
+    } finally {
+      setUpdatingStatus(false);
+    }
+  };
 
   // Inline styles for professional UI
   const styles = {
@@ -85,7 +113,13 @@ const BannerList = () => {
       height: "50px",
       objectFit: "cover",
       borderRadius: "4px",
+      cursor: "pointer",
       boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+    },
+    modalImage: {
+      width: "80%",
+      maxHeight: "80vh",
+      objectFit: "contain",
     },
     error: {
       color: "red",
@@ -131,19 +165,34 @@ const BannerList = () => {
                         src={img.url}
                         alt="Banner"
                         style={styles.image}
+                        onClick={() => setSelectedImage(img.url)} // Open modal on click
                       />
                     ))}
                   </TableCell>
 
                   {/* Status of the banner */}
                   <TableCell sx={styles.tableCell}>
-                    {banner.isActive ? (
+                    {updatingStatus ? (
+                      <CircularProgress size={24} />
+                    ) : banner.isActive ? (
                       <Tooltip title="Active">
-                        <ToggleOn style={{ color: "green", fontSize: "24px" }} />
+                        <IconButton
+                          onClick={() =>
+                            handleStatusToggle(banner._id, banner.isActive)
+                          }
+                        >
+                          <ToggleOn style={{ color: "green", fontSize: "24px" }} />
+                        </IconButton>
                       </Tooltip>
                     ) : (
                       <Tooltip title="Inactive">
-                        <ToggleOff style={{ color: "red", fontSize: "24px" }} />
+                        <IconButton
+                          onClick={() =>
+                            handleStatusToggle(banner._id, banner.isActive)
+                          }
+                        >
+                          <ToggleOff style={{ color: "red", fontSize: "24px" }} />
+                        </IconButton>
                       </Tooltip>
                     )}
                   </TableCell>
@@ -151,7 +200,9 @@ const BannerList = () => {
                   {/* Actions */}
                   <TableCell sx={styles.tableCell}>
                     <Tooltip title="View Details">
-                      <IconButton>
+                      <IconButton
+                        onClick={() => setSelectedImage(banner.bannerImg[0].url)} // Show the first image in modal
+                      >
                         <Visibility style={{ color: "#3f51b5" }} />
                       </IconButton>
                     </Tooltip>
@@ -162,6 +213,26 @@ const BannerList = () => {
           </Table>
         </TableContainer>
       )}
+
+      {/* Modal for image preview */}
+      <Modal
+        open={!!selectedImage}
+        onClose={() => setSelectedImage(null)}
+        aria-labelledby="image-modal"
+        aria-describedby="modal-to-show-full-size-banner-image"
+      >
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+            backgroundColor: "rgba(0, 0, 0, 0.8)",
+          }}
+        >
+          <img src={selectedImage} alt="Full Banner" style={styles.modalImage} />
+        </Box>
+      </Modal>
     </Box>
   );
 };
