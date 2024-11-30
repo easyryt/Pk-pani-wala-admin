@@ -22,6 +22,10 @@ import {
   DialogTitle,
   TextField,
   Tooltip,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import { styled } from "@mui/system";
 import Cookies from "js-cookie";
@@ -62,51 +66,60 @@ const DeliveryChargesPage = () => {
   const [editingCharge, setEditingCharge] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [newDeliveryCharge, setNewDeliveryCharge] = useState("");
+  const [isBulkFilter, setIsBulkFilter] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedChargeToDelete, setSelectedChargeToDelete] = useState(null);
 
   useEffect(() => {
-    const fetchDeliveryCharges = async () => {
-      const token = Cookies.get("token");
-      if (!token) {
-        setSnackbarMessage("Authorization token not found.");
-        setSnackbarSeverity("error");
-        setSnackbarOpen(true);
-        return;
-      }
-      try {
-        const response = await axios.get(
-          "https://pkpaniwala.onrender.com/admin/deliveryCharge/getAll?isBulk=false",
-          {
-            headers: {
-              "Content-Type": "application/json",
-              "x-admin-token": token,
-            },
-          }
-        );
-        if (response.data.status) {
-          setDeliveryCharges(response.data.data);
-        } else {
-          setSnackbarMessage(response.data.message);
-          setSnackbarSeverity("error");
-          setSnackbarOpen(true);
-        }
-      } catch (err) {
-        setError("Failed to fetch delivery charges");
-        setSnackbarMessage("Failed to fetch delivery charges");
-        setSnackbarSeverity("error");
-        setSnackbarOpen(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchDeliveryCharges();
-  }, []);
+  }, [isBulkFilter]);
 
-  const handleDelete = async (chargeId) => {
+  const fetchDeliveryCharges = async () => {
+    const token = Cookies.get("token");
+    if (!token) {
+      setSnackbarMessage("Authorization token not found.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+      return;
+    }
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `https://pkpaniwala.onrender.com/admin/deliveryCharge/getAll?isBulk=${isBulkFilter}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "x-admin-token": token,
+          },
+        }
+      );
+      if (response.data.status) {
+        setDeliveryCharges(response.data.data);
+      } else {
+        setSnackbarMessage(response.data.message);
+        setSnackbarSeverity("error");
+        setSnackbarOpen(true);
+      }
+    } catch (err) {
+      setError("Failed to fetch delivery charges");
+      setSnackbarMessage("Failed to fetch delivery charges");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteClick = (charge) => {
+    setSelectedChargeToDelete(charge);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
     const token = Cookies.get("token");
     try {
       const response = await axios.delete(
-        `https://pkpaniwala.onrender.com/admin/deliveryCharge/delete/${chargeId}`,
+        `https://pkpaniwala.onrender.com/admin/deliveryCharge/delete/${selectedChargeToDelete._id}`,
         {
           headers: {
             "x-admin-token": token,
@@ -117,7 +130,9 @@ const DeliveryChargesPage = () => {
         setSnackbarMessage("Delivery charge deleted successfully.");
         setSnackbarSeverity("success");
         setSnackbarOpen(true);
-        setDeliveryCharges(deliveryCharges.filter((charge) => charge._id !== chargeId));
+        setDeliveryCharges(
+          deliveryCharges.filter((charge) => charge._id !== selectedChargeToDelete._id)
+        );
       } else {
         setSnackbarMessage(response.data.message);
         setSnackbarSeverity("error");
@@ -127,7 +142,13 @@ const DeliveryChargesPage = () => {
       setSnackbarMessage("Failed to delete delivery charge.");
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
+    } finally {
+      setDeleteDialogOpen(false);
     }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   const handleEdit = (charge) => {
@@ -172,13 +193,19 @@ const DeliveryChargesPage = () => {
     }
   };
 
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
-
   return (
     <Container>
       <Title variant="h4">Delivery Charges</Title>
+      <FormControl fullWidth>
+        <InputLabel>Filter by Is Bulk</InputLabel>
+        <Select
+          value={isBulkFilter}
+          onChange={(e) => setIsBulkFilter(e.target.value === "true")}
+        >
+          <MenuItem value="true">Yes</MenuItem>
+          <MenuItem value="false">No</MenuItem>
+        </Select>
+      </FormControl>
       {loading ? (
         <CircularProgress />
       ) : error ? (
@@ -201,8 +228,12 @@ const DeliveryChargesPage = () => {
                   <TableRow key={charge._id}>
                     <TableCell>{charge.deliveryCharge}</TableCell>
                     <TableCell>{charge.isBulk ? "Yes" : "No"}</TableCell>
-                    <TableCell>{new Date(charge.createdAt).toLocaleString()}</TableCell>
-                    <TableCell>{new Date(charge.updatedAt).toLocaleString()}</TableCell>
+                    <TableCell>
+                      {new Date(charge.createdAt).toLocaleString()}
+                    </TableCell>
+                    <TableCell>
+                      {new Date(charge.updatedAt).toLocaleString()}
+                    </TableCell>
                     <TableCell>
                       <Tooltip title="Edit">
                         <IconButton onClick={() => handleEdit(charge)}>
@@ -210,7 +241,7 @@ const DeliveryChargesPage = () => {
                         </IconButton>
                       </Tooltip>
                       <Tooltip title="Delete">
-                        <IconButton onClick={() => handleDelete(charge._id)}>
+                        <IconButton onClick={() => handleDeleteClick(charge)}>
                           <DeleteIcon />
                         </IconButton>
                       </Tooltip>
@@ -224,11 +255,35 @@ const DeliveryChargesPage = () => {
       )}
 
       {/* Snackbar for notifications */}
-      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
-        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: "100%" }}>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
           {snackbarMessage}
         </Alert>
       </Snackbar>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          Are you sure you want to delete this delivery charge?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialogOpen(false)} startIcon={<CancelIcon />}>
+            Cancel
+          </Button>
+          <Button onClick={handleDeleteConfirm} color="error" startIcon={<DeleteIcon />}>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Edit Delivery Charge Dialog */}
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>

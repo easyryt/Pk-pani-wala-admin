@@ -1,48 +1,78 @@
 import React, { useState } from "react";
-import { Box, Button, TextField, Typography, Grid, FormControlLabel, Checkbox, CircularProgress, Snackbar, Alert } from "@mui/material";
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Grid,
+  FormControlLabel,
+  Checkbox,
+  CircularProgress,
+  Snackbar,
+  Alert,
+  IconButton,
+} from "@mui/material";
 import { styled } from "@mui/system";
 import Cookies from "js-cookie";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import DoneIcon from "@mui/icons-material/Done";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import BulkIcon from "@mui/icons-material/Inventory";
 
 // Custom Styled Components
 const Container = styled(Box)(({ theme }) => ({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  backgroundColor: theme.palette.background.default,
+  padding: theme.spacing(2),
 }));
 
 const FormWrapper = styled(Box)(({ theme }) => ({
-  backgroundColor: theme.palette.background.paper,
-  borderRadius: "8px",
+  backgroundColor: "#ffffff",
+  borderRadius: "16px",
   padding: theme.spacing(4),
-  boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+  boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.2)", // Professional shadow
   width: "100%",
   maxWidth: "500px",
 }));
 
 const Title = styled(Typography)(({ theme }) => ({
-  fontWeight: 600,
-  marginBottom: theme.spacing(2),
+  fontWeight: 700,
+  marginBottom: theme.spacing(3),
   textAlign: "center",
-  color: theme.palette.primary.main,
+  color: "#2575fc", // Match gradient color
+}));
+
+const StyledTextField = styled(TextField)(({ theme }) => ({
+  "& .MuiOutlinedInput-root": {
+    borderRadius: "12px",
+    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)", // Shadow for input fields
+  },
 }));
 
 const SubmitButton = styled(Button)(({ theme }) => ({
   width: "100%",
   padding: theme.spacing(1.5),
-  backgroundColor: theme.palette.primary.main,
+  borderRadius: "8px",
+  fontSize: "16px",
+  background: "linear-gradient(135deg, #2575fc, #6a11cb)", // Gradient button
   color: "#fff",
+  fontWeight: "bold",
   "&:hover": {
-    backgroundColor: theme.palette.primary.dark,
+    background: "linear-gradient(135deg, #6a11cb, #2575fc)", // Hover effect
   },
 }));
 
 const ResetButton = styled(Button)(({ theme }) => ({
   width: "100%",
   padding: theme.spacing(1.5),
-  backgroundColor: theme.palette.grey[400],
+  borderRadius: "8px",
+  fontSize: "16px",
+  backgroundColor: theme.palette.grey[300],
+  color: theme.palette.text.primary,
+  fontWeight: "bold",
   "&:hover": {
-    backgroundColor: theme.palette.grey[500],
+    backgroundColor: theme.palette.grey[400],
   },
 }));
 
@@ -125,7 +155,7 @@ const DeliveryChargeForm = () => {
         <form onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <TextField
+              <StyledTextField
                 label="Delivery Charge"
                 type="number"
                 fullWidth
@@ -133,6 +163,13 @@ const DeliveryChargeForm = () => {
                 value={deliveryCharge}
                 onChange={(e) => setDeliveryCharge(e.target.value)}
                 inputProps={{ min: 0 }}
+                InputProps={{
+                  startAdornment: (
+                    <IconButton disabled>
+                      <AttachMoneyIcon color="primary" />
+                    </IconButton>
+                  ),
+                }}
               />
             </Grid>
 
@@ -145,18 +182,24 @@ const DeliveryChargeForm = () => {
                     color="primary"
                   />
                 }
-                label="Is Bulk?"
+                label={
+                  <Typography>
+                    <BulkIcon fontSize="small" style={{ marginRight: "4px" }} />
+                    Is Bulk?
+                  </Typography>
+                }
               />
             </Grid>
 
             <Grid item xs={12}>
-              <SubmitButton variant="contained" color="primary" type="submit" disabled={loading}>
+              <SubmitButton variant="contained" type="submit" disabled={loading}>
                 {loading ? <CircularProgress size={24} color="inherit" /> : "Submit"}
               </SubmitButton>
             </Grid>
 
             <Grid item xs={12}>
-              <ResetButton variant="outlined" color="secondary" onClick={handleReset}>
+              <ResetButton variant="outlined" onClick={handleReset}>
+                <RefreshIcon fontSize="small" style={{ marginRight: "8px" }} />
                 Reset
               </ResetButton>
             </Grid>
