@@ -17,6 +17,9 @@ import {
   TableRow,
   TextField,
   CircularProgress,
+  Modal,
+  Backdrop,
+  Fade,
 } from "@mui/material";
 import { Search as SearchIcon } from "@mui/icons-material";
 import axios from "axios";
@@ -32,6 +35,17 @@ const OrderDetails = () => {
   const [snackbarSeverity, setSnackbarSeverity] = useState("info");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const { id } = useParams();
+  const [updateStatusModalOpen, setUpdateStatusModalOpen] = useState(false);
+  const [verifyDeliveryModalOpen, setVerifyDeliveryModalOpen] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [orderStatus, setOrderStatus] = useState("");
+  const [cancellationReason, setCancellationReason] = useState("");
+
+  // Open/Close Modals
+  const openUpdateStatusModal = () => setUpdateStatusModalOpen(true);
+  const closeUpdateStatusModal = () => setUpdateStatusModalOpen(false);
+  const openVerifyDeliveryModal = () => setVerifyDeliveryModalOpen(true);
+  const closeVerifyDeliveryModal = () => setVerifyDeliveryModalOpen(false);
 
   // Fetch order data from API
   useEffect(() => {
@@ -94,13 +108,64 @@ const OrderDetails = () => {
     return paymentMethod; // In case it's a string
   };
 
-  // Button click handlers
-  const handleOrderStatusClick = () => {
-    console.log({ orderStatus: "Delivered" });
+  const handleUpdateStatusSubmit = async () => {
+    const token = Cookies.get("token");
+    try {
+      // Build payload dynamically based on status
+      const payload = {
+        orderStatus: orderStatus,
+      };
+  
+      // Include the reason only if the status is 'Cancelled'
+      if (orderStatus === "Cancelled") {
+        payload.reason = cancellationReason;
+      }
+  
+      await axios.put(
+        `https://pkpaniwala.onrender.com/admin/order/updateStatus/${id}`,
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "x-admin-token": token,
+          },
+        }
+      );
+  
+      setSnackbarMessage("Order status updated successfully!");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
+      closeUpdateStatusModal();
+    } catch (error) {
+      setSnackbarMessage("Failed to update order status.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+    }
   };
+  
 
-  const handleOtpClick = () => {
-    console.log({ otp: "1741" });
+  const handleVerifyDeliverySubmit = async () => {
+    const token = Cookies.get("token");
+    try {
+      await axios.put(
+        `https://pkpaniwala.onrender.com/admin/order/verifyDelivery/${id}`,
+        { otp },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "x-admin-token": token,
+          },
+        }
+      );
+      setSnackbarMessage("Delivery verified successfully!");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
+      closeVerifyDeliveryModal();
+    } catch (error) {
+      setSnackbarMessage("Failed to verify delivery.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+    }
   };
 
   return (
@@ -116,21 +181,21 @@ const OrderDetails = () => {
         <Button
           variant="contained"
           color="primary"
-          onClick={handleOrderStatusClick}
-          sx={{ textTransform: "none", fontWeight: 600 }}
+          onClick={openUpdateStatusModal}
+          sx={{ mb: 2 }}
         >
           Update Order Status
         </Button>
         <Button
           variant="contained"
           color="secondary"
-          onClick={handleOtpClick}
-          sx={{ textTransform: "none", fontWeight: 600 }}
+          onClick={openVerifyDeliveryModal}
+          sx={{ mb: 2 }}
         >
-         Verify Delivery
+          Verify Delivery
         </Button>
       </Box>
-      <br/>
+      <br />
       {/* Snackbar for Error/Info Messages */}
       <Snackbar
         open={snackbarOpen}
@@ -400,6 +465,124 @@ const OrderDetails = () => {
           </Box>
         </>
       )}
+      {/* Update Order Status Modal */}
+      <Modal
+        open={updateStatusModalOpen}
+        onClose={closeUpdateStatusModal}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={updateStatusModalOpen}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              bgcolor: "background.paper",
+              borderRadius: 2,
+              p: 4,
+              boxShadow: 24,
+              width: 400,
+            }}
+          >
+            <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
+              Update Order Status
+            </Typography>
+            <TextField
+              select
+              label="Order Status"
+              variant="outlined"
+              fullWidth
+              value={orderStatus}
+              onChange={(e) => setOrderStatus(e.target.value)}
+              SelectProps={{
+                native: true,
+              }}
+              sx={{ mb: 2 }}
+            >
+              <option value="">Select Status</option>
+              <option value="Pending">Pending</option>
+              <option value="Accepted">Accepted</option>
+              <option value="Delivered">Delivered</option>
+              <option value="Cancelled">Cancelled</option>
+            </TextField>
+
+            {orderStatus === "Cancelled" && (
+              <TextField
+                label="Reason for Cancellation"
+                variant="outlined"
+                fullWidth
+                value={cancellationReason}
+                onChange={(e) => setCancellationReason(e.target.value)}
+                sx={{ mb: 2 }}
+              />
+            )}
+
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              onClick={handleUpdateStatusSubmit}
+              disabled={
+                orderStatus === "Cancelled" && cancellationReason.trim() === ""
+              }
+            >
+              Submit
+            </Button>
+          </Box>
+        </Fade>
+      </Modal>
+
+      {/* Verify Delivery Modal */}
+      <Modal
+        open={verifyDeliveryModalOpen}
+        onClose={closeVerifyDeliveryModal}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={verifyDeliveryModalOpen}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              bgcolor: "background.paper",
+              borderRadius: 2,
+              p: 4,
+              boxShadow: 24,
+              width: 400,
+            }}
+          >
+            <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
+              Verify Delivery
+            </Typography>
+            <TextField
+              label="OTP"
+              variant="outlined"
+              fullWidth
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              sx={{ mb: 2 }}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              onClick={handleVerifyDeliverySubmit}
+            >
+              Submit
+            </Button>
+          </Box>
+        </Fade>
+      </Modal>
     </Box>
   );
 };
