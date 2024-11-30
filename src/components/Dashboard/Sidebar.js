@@ -15,6 +15,7 @@ import BorderAllIcon from "@mui/icons-material/BorderAll";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
 import DeliveryDiningIcon from '@mui/icons-material/DeliveryDining';
+import GroupIcon from '@mui/icons-material/Group';
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -51,6 +52,11 @@ const Sidebar = () => {
       text: "All Delivery Charge",
       icon: <DeliveryDiningIcon />,
       path: "/dashboard/all-delivery-Charges",
+    },
+    {
+      text: "consumers",
+      icon: <GroupIcon />,
+      path: "/dashboard/consumers",
     },
   ];
 
