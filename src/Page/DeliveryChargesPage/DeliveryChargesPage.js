@@ -32,7 +32,7 @@ import Cookies from "js-cookie";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Save as SaveIcon, Cancel as CancelIcon } from "@mui/icons-material";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -67,10 +67,10 @@ const DeliveryChargesPage = () => {
   const [editingCharge, setEditingCharge] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [newDeliveryCharge, setNewDeliveryCharge] = useState("");
-  const [isBulkFilter, setIsBulkFilter] = useState(false);
+  const [isBulkFilter, setIsBulkFilter] = useState(""); // Changed to support "All" option
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedChargeToDelete, setSelectedChargeToDelete] = useState(null);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchDeliveryCharges();
@@ -86,15 +86,18 @@ const DeliveryChargesPage = () => {
     }
     setLoading(true);
     try {
-      const response = await axios.get(
-        `https://pkpaniwala.onrender.com/admin/deliveryCharge/getAll?isBulk=${isBulkFilter}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "x-admin-token": token,
-          },
-        }
-      );
+      // Modify URL based on the filter selected
+      const url = isBulkFilter
+        ? `https://pkpaniwala.onrender.com/admin/deliveryCharge/getAll?isBulk=${isBulkFilter}`
+        : "https://pkpaniwala.onrender.com/admin/deliveryCharge/getAll";
+      
+      const response = await axios.get(url, {
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-token": token,
+        },
+      });
+
       if (response.data.status) {
         setDeliveryCharges(response.data.data);
       } else {
@@ -198,16 +201,21 @@ const DeliveryChargesPage = () => {
   return (
     <Container>
       <Title variant="h4">Delivery Charges</Title>
+
+      {/* Filter Section */}
       <FormControl fullWidth>
         <InputLabel>Filter by Is Bulk</InputLabel>
         <Select
           value={isBulkFilter}
-          onChange={(e) => setIsBulkFilter(e.target.value === "true")}
+          onChange={(e) => setIsBulkFilter(e.target.value)}
+          label="Filter by Is Bulk"
         >
+          <MenuItem value="">All</MenuItem>
           <MenuItem value="true">Yes</MenuItem>
           <MenuItem value="false">No</MenuItem>
         </Select>
       </FormControl>
+
       {loading ? (
         <CircularProgress />
       ) : error ? (
@@ -238,8 +246,7 @@ const DeliveryChargesPage = () => {
                     </TableCell>
                     <TableCell>
                       <Tooltip title="Edit">
-                        <IconButton onClick={() => navigate(`/dashboard/delivery-update-charges/${charge.isBulk}`)}
-                        >
+                        <IconButton onClick={() => navigate(`/dashboard/delivery-update-charges/${charge.isBulk}`)}>
                           <EditIcon />
                         </IconButton>
                       </Tooltip>
@@ -294,17 +301,21 @@ const DeliveryChargesPage = () => {
         <DialogContent>
           <TextField
             label="Delivery Charge"
-            type="number"
             fullWidth
             value={newDeliveryCharge}
             onChange={(e) => setNewDeliveryCharge(e.target.value)}
+            type="number"
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenDialog(false)} startIcon={<CancelIcon />}>
             Cancel
           </Button>
-          <Button onClick={handleSaveEdit} color="primary" startIcon={<SaveIcon />}>
+          <Button
+            onClick={handleSaveEdit}
+            color="primary"
+            startIcon={<SaveIcon />}
+          >
             Save
           </Button>
         </DialogActions>
