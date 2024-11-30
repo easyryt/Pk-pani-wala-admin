@@ -210,7 +210,7 @@ const OrderHistoryPage = () => {
               <TableBody>
                 {orders.map((order) => (
                   <TableRow key={order.orderId}>
-                    <TableCell>{order.orderId}</TableCell>
+                    <TableCell>{order.orderID}</TableCell>
                     <TableCell>
                       <Image
                         src={order.Product_image}
