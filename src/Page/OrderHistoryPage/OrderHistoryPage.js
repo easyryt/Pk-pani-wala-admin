@@ -34,7 +34,6 @@ const Container = styled(Box)(({ theme }) => ({
   flexDirection: "column",
   backgroundColor: theme.palette.background.default,
   padding: theme.spacing(4),
-  minHeight: "100vh",
 }));
 
 const Title = styled(Typography)(({ theme }) => ({
