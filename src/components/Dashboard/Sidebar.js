@@ -54,7 +54,7 @@ const Sidebar = () => {
       path: "/dashboard/all-delivery-Charges",
     },
     {
-      text: "consumers",
+      text: "Consumers",
       icon: <GroupIcon />,
       path: "/dashboard/consumers",
     },
