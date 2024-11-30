@@ -16,6 +16,8 @@ import {
   TableHead,
   TableRow,
   Paper,
+  TextField,
+  Button,
 } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import EmailIcon from "@mui/icons-material/Email";
@@ -51,16 +53,27 @@ const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
   backgroundColor: "#fff",
 }));
 
+const ControlsContainer = styled(Box)(({ theme }) => ({
+  width: "100%",
+  maxWidth: "1200px",
+  margin: theme.spacing(2, 0),
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing(2),
+  [theme.breakpoints.up("sm")]: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+}));
+
+const StyledTextField = styled(TextField)(({ theme }) => ({
+  flexGrow: 1,
+}));
+
 const AvatarWrapper = styled(Box)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   gap: theme.spacing(2),
-}));
-
-const AvatarText = styled(Box)(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "center",
 }));
 
 const InfoBox = styled(Box)(({ theme }) => ({
@@ -68,12 +81,6 @@ const InfoBox = styled(Box)(({ theme }) => ({
   alignItems: "center",
   gap: theme.spacing(1),
   marginBottom: theme.spacing(1),
-}));
-
-const StyledCard = styled(Card)(({ theme }) => ({
-  borderRadius: "12px",
-  boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-  marginBottom: theme.spacing(2),
 }));
 
 const LoadingWrapper = styled(Box)(({ theme }) => ({
@@ -91,34 +98,40 @@ const NoDataText = styled(Typography)(({ theme }) => ({
 
 const ConsumersPage = () => {
   const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [page, setPage] = useState(1);
+  const pageSize = 5; // Number of rows per page
 
   useEffect(() => {
     const fetchConsumers = async () => {
-        const token = Cookies.get("token");
-        if (!token) {
-          setSnackbarMessage("Authorization token not found.");
-          setSnackbarSeverity("error");
-          setSnackbarOpen(true);
-          return;
-        }
+      const token = Cookies.get("token");
+      if (!token) {
+        setSnackbarMessage("Authorization token not found.");
+        setSnackbarSeverity("error");
+        setSnackbarOpen(true);
+        return;
+      }
       try {
         setLoading(true);
         const response = await fetch(
-          "https://pkpaniwala.onrender.com/admin/consumerData/allconsumer",{
+          "https://pkpaniwala.onrender.com/admin/consumerData/allconsumer",
+          {
             headers: {
-                "Content-Type": "application/json",
-                "x-admin-token": token,
-              },
+              "Content-Type": "application/json",
+              "x-admin-token": token,
+            },
           }
         );
 
         if (response.ok) {
           const result = await response.json();
           setData(result.data);
+          setFilteredData(result.data);
         } else {
           setSnackbarMessage("Failed to fetch consumer data");
           setSnackbarSeverity("error");
@@ -136,15 +149,68 @@ const ConsumersPage = () => {
     fetchConsumers();
   }, []);
 
+  // Search Functionality
+  useEffect(() => {
+    const lowercasedTerm = searchTerm.toLowerCase();
+    const filtered = data.filter(
+      (consumer) =>
+        (consumer.fullName && consumer.fullName.toLowerCase().includes(lowercasedTerm)) ||
+        consumer.phone.includes(lowercasedTerm) ||
+        (consumer.email && consumer.email.toLowerCase().includes(lowercasedTerm))
+    );
+    setFilteredData(filtered);
+  }, [searchTerm, data]);
+
+  const handleNextPage = () => {
+    setPage((prevPage) => prevPage + 1);
+  };
+
+  const handlePrevPage = () => {
+    if (page > 1) {
+      setPage((prevPage) => prevPage - 1);
+    }
+  };
+
+  // Paginate Data
+  const paginatedData = filteredData.slice((page - 1) * pageSize, page * pageSize);
+
   return (
     <PageContainer>
       <Title>All Consumers</Title>
+
+      {/* Controls */}
+      <ControlsContainer>
+        <StyledTextField
+          variant="outlined"
+          placeholder="Search by name, phone, or email"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <Box display="flex" gap={2}>
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={page === 1}
+            onClick={handlePrevPage}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={page * pageSize >= filteredData.length}
+            onClick={handleNextPage}
+          >
+            Next
+          </Button>
+        </Box>
+      </ControlsContainer>
 
       {loading ? (
         <LoadingWrapper>
           <CircularProgress size={50} color="primary" />
         </LoadingWrapper>
-      ) : data.length === 0 ? (
+      ) : paginatedData.length === 0 ? (
         <NoDataText>No consumer data available</NoDataText>
       ) : (
         <StyledTableContainer component={Paper}>
@@ -163,7 +229,7 @@ const ConsumersPage = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {data.map((consumer) => (
+              {paginatedData.map((consumer) => (
                 <TableRow key={consumer._id}>
                   <TableCell>
                     <AvatarWrapper>
@@ -177,11 +243,6 @@ const ConsumersPage = () => {
                       >
                         <AccountCircleIcon />
                       </Avatar>
-                      <AvatarText>
-                        <Typography variant="body1">
-                          {consumer.fullName || "N/A"}
-                        </Typography>
-                      </AvatarText>
                     </AvatarWrapper>
                   </TableCell>
                   <TableCell>{consumer.fullName || "N/A"}</TableCell>
