@@ -14,6 +14,10 @@ import {
   Modal,
   Snackbar,
   Alert,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
 } from "@mui/material";
 import { Visibility, ToggleOn, ToggleOff, Close, Delete } from "@mui/icons-material";
 import axios from "axios";
@@ -30,6 +34,10 @@ const BannerList = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("info");
   const [openSnackbar, setOpenSnackbar] = useState(false);
+
+  // Confirmation dialog state
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [bannerToDelete, setBannerToDelete] = useState(null);
 
   // Fetch banners from API
   useEffect(() => {
@@ -107,9 +115,23 @@ const BannerList = () => {
     }
   };
 
+  // Open delete confirmation dialog
+  const handleOpenDeleteDialog = (bannerId) => {
+    setBannerToDelete(bannerId);
+    setOpenDeleteDialog(true);
+  };
+
+  // Close delete confirmation dialog
+  const handleCloseDeleteDialog = () => {
+    setOpenDeleteDialog(false);
+    setBannerToDelete(null);
+  };
+
   // Delete banner
-  const handleDeleteBanner = async (bannerId) => {
-    setDeletingBanner(bannerId); // Mark the current banner as deleting
+  const handleDeleteBanner = async () => {
+    if (!bannerToDelete) return;
+
+    setDeletingBanner(bannerToDelete); // Mark the current banner as deleting
     const token = Cookies.get("token");
     if (!token) {
       setSnackbarMessage("Authorization token not found.");
@@ -119,7 +141,7 @@ const BannerList = () => {
     }
     try {
       await axios.delete(
-        `https://pkpaniwala.onrender.com/admin/banner/delete/${bannerId}`,
+        `https://pkpaniwala.onrender.com/admin/banner/delete/${bannerToDelete}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -130,7 +152,7 @@ const BannerList = () => {
 
       // Remove the banner from local state after successful API call
       setBanners((prevBanners) =>
-        prevBanners.filter((banner) => banner._id !== bannerId)
+        prevBanners.filter((banner) => banner._id !== bannerToDelete)
       );
       setSnackbarMessage("Banner deleted successfully.");
       setSnackbarSeverity("success");
@@ -141,6 +163,7 @@ const BannerList = () => {
       setOpenSnackbar(true);
     } finally {
       setDeletingBanner("");
+      handleCloseDeleteDialog(); // Close dialog after deleting
     }
   };
 
@@ -269,7 +292,7 @@ const BannerList = () => {
                             handleStatusToggle(banner._id, banner.isActive)
                           }
                         >
-                          <ToggleOn style={{ color: "green", fontSize: "24px" }} />
+                          <ToggleOn color="success" />
                         </IconButton>
                       </Tooltip>
                     ) : (
@@ -279,7 +302,7 @@ const BannerList = () => {
                             handleStatusToggle(banner._id, banner.isActive)
                           }
                         >
-                          <ToggleOff style={{ color: "red", fontSize: "24px" }} />
+                          <ToggleOff color="error" />
                         </IconButton>
                       </Tooltip>
                     )}
@@ -287,24 +310,11 @@ const BannerList = () => {
 
                   {/* Actions */}
                   <TableCell sx={styles.tableCell}>
-                    <Tooltip title="View Details">
-                      <IconButton
-                        onClick={() => setSelectedImage(banner.bannerImg[0].url)} // Show the first image in modal
-                      >
-                        <Visibility style={{ color: "#3f51b5" }} />
-                      </IconButton>
-                    </Tooltip>
-
                     <Tooltip title="Delete">
                       <IconButton
-                        onClick={() => handleDeleteBanner(banner._id)}
-                        disabled={deletingBanner === banner._id} // Disable button while deleting
+                        onClick={() => handleOpenDeleteDialog(banner._id)}
                       >
-                        {deletingBanner === banner._id ? (
-                          <CircularProgress size={20} />
-                        ) : (
-                          <Delete style={{ color: "red" }} />
-                        )}
+                        <Delete color="error" />
                       </IconButton>
                     </Tooltip>
                   </TableCell>
@@ -315,12 +325,10 @@ const BannerList = () => {
         </TableContainer>
       )}
 
-      {/* Modal for image preview */}
+      {/* Modal for displaying image */}
       <Modal
         open={Boolean(selectedImage)}
         onClose={() => setSelectedImage(null)}
-        aria-labelledby="image-preview-modal"
-        aria-describedby="image-preview-modal-description"
       >
         <Box
           sx={{
@@ -328,20 +336,20 @@ const BannerList = () => {
             justifyContent: "center",
             alignItems: "center",
             height: "100vh",
-            position: "relative",
+            backgroundColor: "rgba(0, 0, 0, 0.7)",
           }}
         >
-          <img src={selectedImage} alt="Preview" style={styles.modalImage} />
+          <img src={selectedImage} alt="Banner" style={styles.modalImage} />
           <IconButton
-            onClick={() => setSelectedImage(null)}
             sx={styles.modalCloseButton}
+            onClick={() => setSelectedImage(null)}
           >
             <Close />
           </IconButton>
         </Box>
       </Modal>
 
-      {/* Snackbar for notifications */}
+      {/* Snackbar for success or error messages */}
       <Snackbar
         open={openSnackbar}
         autoHideDuration={3000}
@@ -355,6 +363,22 @@ const BannerList = () => {
           {snackbarMessage}
         </Alert>
       </Snackbar>
+
+      {/* Delete confirmation dialog */}
+      <Dialog
+        open={openDeleteDialog}
+        onClose={handleCloseDeleteDialog}
+        aria-labelledby="delete-dialog-title"
+      >
+        <DialogTitle id="delete-dialog-title">Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to delete this banner?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <button onClick={handleCloseDeleteDialog}>Cancel</button>
+          <button onClick={handleDeleteBanner}>Delete</button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
