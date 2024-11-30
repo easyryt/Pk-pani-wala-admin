@@ -14,7 +14,7 @@ import {
   Paper,
 } from "@mui/material";
 import { styled } from "@mui/system";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Cookies from "js-cookie";
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
@@ -116,6 +116,7 @@ const ConsumerKartPage = () => {
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const navigate = useNavigate();
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm'));
+  const {id} = useParams()
 
   useEffect(() => {
     const fetchConsumerKart = async () => {
@@ -129,7 +130,7 @@ const ConsumerKartPage = () => {
 
       try {
         const response = await fetch(
-          "https://pkpaniwala.onrender.com/admin/abandonKart/consumerKart/6744a311bb0ffa1490aba1e0",
+          `https://pkpaniwala.onrender.com/admin/abandonKart/consumerKart/${id}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -156,7 +157,7 @@ const ConsumerKartPage = () => {
     };
 
     fetchConsumerKart();
-  }, []);
+  }, [id]);
 
   // Display Loading Spinner
   if (loading) {
