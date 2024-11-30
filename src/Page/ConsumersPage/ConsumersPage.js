@@ -18,6 +18,7 @@ import {
   Paper,
   TextField,
   Button,
+  IconButton,
 } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import EmailIcon from "@mui/icons-material/Email";
@@ -28,6 +29,8 @@ import CelebrationIcon from "@mui/icons-material/Celebration";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { styled } from "@mui/system";
 import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 // Custom Styles
 const PageContainer = styled(Box)(({ theme }) => ({
@@ -106,6 +109,7 @@ const ConsumersPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const pageSize = 5; // Number of rows per page
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchConsumers = async () => {
@@ -154,9 +158,11 @@ const ConsumersPage = () => {
     const lowercasedTerm = searchTerm.toLowerCase();
     const filtered = data.filter(
       (consumer) =>
-        (consumer.fullName && consumer.fullName.toLowerCase().includes(lowercasedTerm)) ||
+        (consumer.fullName &&
+          consumer.fullName.toLowerCase().includes(lowercasedTerm)) ||
         consumer.phone.includes(lowercasedTerm) ||
-        (consumer.email && consumer.email.toLowerCase().includes(lowercasedTerm))
+        (consumer.email &&
+          consumer.email.toLowerCase().includes(lowercasedTerm))
     );
     setFilteredData(filtered);
   }, [searchTerm, data]);
@@ -172,7 +178,10 @@ const ConsumersPage = () => {
   };
 
   // Paginate Data
-  const paginatedData = filteredData.slice((page - 1) * pageSize, page * pageSize);
+  const paginatedData = filteredData.slice(
+    (page - 1) * pageSize,
+    page * pageSize
+  );
 
   return (
     <PageContainer>
@@ -217,15 +226,36 @@ const ConsumersPage = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell><strong>Profile</strong></TableCell>
-                <TableCell><strong>Full Name</strong></TableCell>
-                <TableCell><strong>Phone</strong></TableCell>
-                <TableCell><strong>Email</strong></TableCell>
-                <TableCell><strong>DOB</strong></TableCell>
-                <TableCell><strong>Anniversary</strong></TableCell>
-                <TableCell><strong>Role</strong></TableCell>
-                <TableCell><strong>Gender</strong></TableCell>
-                <TableCell><strong>Created At</strong></TableCell>
+                <TableCell>
+                  <strong>Profile</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Full Name</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Phone</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Email</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>DOB</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Anniversary</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Role</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Gender</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Created At</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Check Cart</strong>
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -279,6 +309,15 @@ const ConsumersPage = () => {
                   <TableCell>{consumer.gender}</TableCell>
                   <TableCell>
                     {new Date(consumer.createdAt).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    <IconButton
+                      onClick={() =>
+                        navigate(`/dashboard/consumers-cart/${consumer._id}`)
+                      }
+                    >
+                      <ShoppingCartIcon />
+                    </IconButton>
                   </TableCell>
                 </TableRow>
               ))}
