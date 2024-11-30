@@ -25,6 +25,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 
 // Styled Components
 const Container = styled(Box)(({ theme }) => ({
@@ -62,9 +63,9 @@ const SearchBarWrapper = styled(Box)(({ theme }) => ({
 }));
 
 const Image = styled("img")({
-  width: "70px", 
-  height: "auto", 
-  objectFit: "cover", 
+  width: "70px",
+  height: "auto",
+  objectFit: "cover",
   borderRadius: "8px",
 });
 
@@ -222,6 +223,7 @@ const OrderHistoryPage = () => {
                   <TableCell>Payment Method</TableCell>
                   <TableCell>Tracking Details</TableCell>
                   <TableCell>Order Date</TableCell>
+                  <TableCell>Order Details</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -239,10 +241,23 @@ const OrderHistoryPage = () => {
                     <TableCell>{order.totalItem}</TableCell>
                     <TableCell>${order.grandTotal.toFixed(2)}</TableCell>
                     <TableCell>
-                      {order.paymentMethod.cod ? "Cash on Delivery" : "Online Payment"}
+                      {order.paymentMethod.cod
+                        ? "Cash on Delivery"
+                        : "Online Payment"}
                     </TableCell>
                     <TableCell>{order.trackingDetails}</TableCell>
-                    <TableCell>{new Date(order.orderDate).toLocaleString()}</TableCell>
+                    <TableCell>
+                      {new Date(order.orderDate).toLocaleString()}
+                    </TableCell>
+                    <TableCell>
+                      <IconButton
+                        onClick={() =>
+                          navigate(`/dashboard/order-details/${order.orderId}`)
+                        }
+                      >
+                        <ShoppingCartOutlinedIcon />
+                      </IconButton>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
