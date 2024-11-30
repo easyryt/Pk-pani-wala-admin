@@ -16,6 +16,8 @@ import ConsumersPage from "./Page/ConsumersPage/ConsumersPage";
 import ConsumerKartPage from "./Page/ConsumerKartPage/ConsumerKartPage";
 import OrderHistoryPage from "./Page/OrderHistoryPage/OrderHistoryPage";
 import OrderDetails from "./Page/OrderDetails/OrderDetails";
+import BannerCreate from "./Page/BannerCreate/BannerCreate";
+import BannerList from "./Page/BannerList/BannerList";
 
 const App = () => {
   return (
@@ -45,6 +47,8 @@ const App = () => {
           <Route path="consumers-cart/:id" element={<ConsumerKartPage />} />
           <Route path="order-history" element={<OrderHistoryPage />} />
           <Route path="order-details/:id" element={<OrderDetails />} />
+          <Route path="banner-create" element={<BannerCreate />} />
+          <Route path="banner-list" element={<BannerList />} />
         </Route>
 
         {/* Create Product Page (outside dashboard) */}
@@ -63,6 +67,8 @@ const App = () => {
         <Route path="/consumers-cart/:id" element={<ConsumerKartPage />} />
         <Route path="/order-history" element={<OrderHistoryPage />} />
         <Route path="/order-details/:id" element={<OrderDetails />} />
+        <Route path="/banner-create" element={<BannerCreate />} />
+        <Route path="/banner-list" element={<BannerList />} />
         {/* Fallback for Not Found Pages */}
         <Route path="*" element={<NotFound />} />
       </Routes>

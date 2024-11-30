@@ -17,6 +17,7 @@ import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
 import DeliveryDiningIcon from '@mui/icons-material/DeliveryDining';
 import GroupIcon from '@mui/icons-material/Group';
 import LocalShippingSharpIcon from '@mui/icons-material/LocalShippingSharp';
+import ViewCarouselOutlinedIcon from '@mui/icons-material/ViewCarouselOutlined';
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -63,6 +64,16 @@ const Sidebar = () => {
       text: "Order History",
       icon: <LocalShippingSharpIcon />,
       path: "/dashboard/order-history",
+    },
+    {
+      text: "Banner Create",
+      icon: <ViewCarouselOutlinedIcon />,
+      path: "/dashboard/banner-create",
+    },
+    {
+      text: "All Banner",
+      icon: <ViewCarouselOutlinedIcon />,
+      path: "/dashboard/banner-list",
     },
   ];
 
