@@ -239,7 +239,7 @@ const OrderHistoryPage = () => {
                       />
                     </TableCell>
                     <TableCell>{order.totalItem}</TableCell>
-                    <TableCell>${order.grandTotal.toFixed(2)}</TableCell>
+                    <TableCell>₹{order.grandTotal.toFixed(2)}</TableCell>
                     <TableCell>
                       {order.paymentMethod.cod
                         ? "Cash on Delivery"

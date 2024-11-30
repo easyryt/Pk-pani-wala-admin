@@ -172,9 +172,9 @@ const OrderDetails = () => {
                         {item.Product_title}
                       </TableCell>
                       <TableCell sx={{ fontWeight: 500 }}>{item.Product_description}</TableCell>
-                      <TableCell sx={{ fontWeight: 500 }}>${item.Product_Price}</TableCell>
+                      <TableCell sx={{ fontWeight: 500 }}>₹{item.Product_Price}</TableCell>
                       <TableCell sx={{ fontWeight: 500 }}>{item.Product_qantity}</TableCell>
-                      <TableCell sx={{ fontWeight: 500 }}>${item.Product_total}</TableCell>
+                      <TableCell sx={{ fontWeight: 500 }}>₹{item.Product_total}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -182,79 +182,37 @@ const OrderDetails = () => {
             </TableContainer>
           </Box>
 
-          {/* Payment Information Section */}
-          <Box sx={{ mt: 4 }}>
-            <Typography variant="h5" sx={{ fontWeight: 600, color: '#333333' }} gutterBottom>
+        {/* Payment Summary */}
+        <Box sx={{ mt: 4 }}>
+            <Typography variant="h5" gutterBottom>
               Payment Summary
             </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
-                <Card sx={{ boxShadow: 6, borderRadius: 2, backgroundColor: '#ffffff' }}>
-                  <CardContent>
-                    <Typography variant="h6" sx={{ fontWeight: 600 }}>Total Item</Typography>
-                    <Typography variant="body1" sx={{ fontWeight: 500 }}>{orderData.productData.totalItem}</Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Card sx={{ boxShadow: 6, borderRadius: 2, backgroundColor: '#ffffff' }}>
-                  <CardContent>
-                    <Typography variant="h6" sx={{ fontWeight: 600 }}>Total Product Price</Typography>
-                    <Typography variant="body1" sx={{ fontWeight: 500 }}>${orderData.productData.totalProductPrice}</Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Card sx={{ boxShadow: 6, borderRadius: 2, backgroundColor: '#ffffff' }}>
-                  <CardContent>
-                    <Typography variant="h6" sx={{ fontWeight: 600 }}>Gst Amount</Typography>
-                    <Typography variant="body1" sx={{ fontWeight: 500 }}>${orderData.productData.gstAmount}</Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Card sx={{ boxShadow: 6, borderRadius: 2, backgroundColor: '#ffffff' }}>
-                  <CardContent>
-                    <Typography variant="h6" sx={{ fontWeight: 600 }}>Total Delivery Charge</Typography>
-                    <Typography variant="body1" sx={{ fontWeight: 500 }}>${orderData.productData.totalDeliveryCharge}</Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Card sx={{ boxShadow: 6, borderRadius: 2, backgroundColor: '#ffffff' }}>
-                  <CardContent>
-                    <Typography variant="h6" sx={{ fontWeight: 600 }}>Total Order Price</Typography>
-                    <Typography variant="body1" sx={{ fontWeight: 500 }}>${orderData.productData.grandTotal}</Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Card sx={{ boxShadow: 6, borderRadius: 2, backgroundColor: '#ffffff' }}>
-                  <CardContent>
-                    <Typography variant="h6" sx={{ fontWeight: 600 }}>Total Floor Charge</Typography>
-                    <Typography variant="body1" sx={{ fontWeight: 500 }}>${orderData.productData.totalFloorCharge}</Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Card sx={{ boxShadow: 6, borderRadius: 2, backgroundColor: '#ffffff' }}>
-                  <CardContent>
-                    <Typography variant="h6" sx={{ fontWeight: 600 }}>Grand Total</Typography>
-                    <Typography variant="body1" sx={{ fontWeight: 500 }}>${orderData.productData.grandTotal}</Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-            </Grid>
-            <Grid container spacing={2} sx={{ mt: 2 }}>
-              <Grid item xs={12} md={6}>
-                <Card sx={{ boxShadow: 6, borderRadius: 2, backgroundColor: '#ffffff' }}>
-                  <CardContent>
-                    <Typography variant="h6" sx={{ fontWeight: 600 }}>Payment Method</Typography>
-                    <Typography variant="body1" sx={{ fontWeight: 500 }}>{getPaymentMethod()}</Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-            </Grid>
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Total Items</TableCell>
+                    <TableCell>Total Product Price</TableCell>
+                    <TableCell>GST Amount</TableCell>
+                    <TableCell>Delivery Charge</TableCell>
+                    <TableCell>Total Floor Charge</TableCell>
+                    <TableCell>Grand Total</TableCell>
+                    <TableCell>Payment Method</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>{orderData.productData.totalItem}</TableCell>
+                    <TableCell>₹{orderData.productData.totalProductPrice}</TableCell>
+                    <TableCell>₹{orderData.productData.gstAmount}</TableCell>
+                    <TableCell>₹{orderData.productData.totalDeliveryCharge}</TableCell>
+                    <TableCell>₹{orderData.productData.totalFloorCharge}</TableCell>
+                    <TableCell>₹{orderData.productData.grandTotal}</TableCell>
+                    <TableCell>{getPaymentMethod()}</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
           </Box>
         </>
       )}
