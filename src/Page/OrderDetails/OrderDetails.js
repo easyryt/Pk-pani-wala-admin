@@ -94,6 +94,15 @@ const OrderDetails = () => {
     return paymentMethod; // In case it's a string
   };
 
+  // Button click handlers
+  const handleOrderStatusClick = () => {
+    console.log({ orderStatus: "Delivered" });
+  };
+
+  const handleOtpClick = () => {
+    console.log({ otp: "1741" });
+  };
+
   return (
     <Box
       sx={{
@@ -103,6 +112,25 @@ const OrderDetails = () => {
         fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
       }}
     >
+      <Box sx={{ mt: 2, display: "flex", gap: 2 }}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleOrderStatusClick}
+          sx={{ textTransform: "none", fontWeight: 600 }}
+        >
+          Update Order Status
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={handleOtpClick}
+          sx={{ textTransform: "none", fontWeight: 600 }}
+        >
+         Verify Delivery
+        </Button>
+      </Box>
+      <br/>
       {/* Snackbar for Error/Info Messages */}
       <Snackbar
         open={snackbarOpen}
